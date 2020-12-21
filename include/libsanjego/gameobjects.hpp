@@ -34,6 +34,11 @@ class GameField {
 
   Tower& TowerAt(const uint8_t row, const uint8_t column) noexcept;
 
+  /*
+   * Returns a copy of the tower at the given position for read-only tasks.
+   */
+  Tower GetTowerAt(const uint8_t row, const uint8_t column) const noexcept;
+
   const uint8_t height;
   const uint8_t width;
 
