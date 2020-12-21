@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <vector>
 
 namespace libsanjego {
 enum struct Player : uint8_t { FIRST = 0, SECOND = 1 };
@@ -21,5 +22,21 @@ class Tower {
 
  private:
   uint8_t representation;
+};
+
+class GameField {
+ public:
+  /*
+   * Creates a new GameField by placing towers of height 1 on the field
+   * with the owners alternating in a checkerboard-like pattern.
+   */
+  GameField(const uint8_t height, const uint8_t width);
+
+  Tower& TowerAt(const uint8_t row, const uint8_t column) noexcept;
+
+ private:
+  const uint8_t height;
+  const uint8_t width;
+  std::vector<Tower> field;
 };
 }  // namespace libsanjego

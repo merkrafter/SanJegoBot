@@ -17,4 +17,24 @@ uint8_t Tower::Height() const noexcept {
   return without_owner(this->representation);
 }
 
+constexpr uint32_t dual_to_single_index(const uint8_t row, const uint8_t column,
+                                        const uint8_t height) {
+  return row * height + column;
+}
+
+GameField::GameField(const uint8_t height, const uint8_t width)
+    : height(height), width(width) {
+  this->field.reserve(height * width);
+  for (int row = 0; row < height; row++) {
+    for (int col = 0; col < width; col++) {
+      const auto idx = dual_to_single_index(row, col, height);
+      this->field[idx] = Tower(static_cast<Player>((row + col) % 2));
+    }
+  }
+}
+
+Tower& GameField::TowerAt(const uint8_t row, const uint8_t column) noexcept {
+  return this->field[dual_to_single_index(row, column, this->height)];
+}
+
 }  // namespace libsanjego
