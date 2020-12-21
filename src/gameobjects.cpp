@@ -17,12 +17,12 @@ uint8_t Tower::Height() const noexcept {
   return without_owner(this->representation);
 }
 
-constexpr uint32_t dual_to_single_index(const uint8_t row, const uint8_t column,
-                                        const uint8_t height) {
+constexpr uint32_t dual_to_single_index(const Row row, const Column column,
+                                        const Row height) {
   return row * height + column;
 }
 
-GameField::GameField(const uint8_t height, const uint8_t width)
+GameField::GameField(const Row height, const Column width)
     : height(height), width(width) {
   this->field.reserve(height * width);
   for (int row = 0; row < height; row++) {
@@ -33,12 +33,11 @@ GameField::GameField(const uint8_t height, const uint8_t width)
   }
 }
 
-Tower& GameField::TowerAt(const uint8_t row, const uint8_t column) noexcept {
+Tower& GameField::TowerAt(const Row row, const Column column) noexcept {
   return this->field[dual_to_single_index(row, column, this->height)];
 }
 
-Tower GameField::GetTowerAt(const uint8_t row,
-                            const uint8_t column) const noexcept {
+Tower GameField::GetTowerAt(const Row row, const Column column) const noexcept {
   return this->field[dual_to_single_index(row, column, this->height)];
 }
 }  // namespace libsanjego

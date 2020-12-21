@@ -24,23 +24,37 @@ class Tower {
   uint8_t representation;
 };
 
+struct Row {
+ public:
+  constexpr Row(const uint8_t value) noexcept : value(value){};
+  constexpr operator uint8_t() const noexcept { return value; }
+  uint8_t value;
+};
+
+struct Column {
+ public:
+  constexpr Column(const uint8_t value) noexcept : value(value){};
+  constexpr operator uint8_t() const noexcept { return value; }
+  uint8_t value;
+};
+
 class GameField {
  public:
   /*
    * Creates a new GameField by placing towers of height 1 on the field
    * with the owners alternating in a checkerboard-like pattern.
    */
-  GameField(const uint8_t height, const uint8_t width);
+  GameField(const Row height, const Column width);
 
-  Tower& TowerAt(const uint8_t row, const uint8_t column) noexcept;
+  Tower& TowerAt(const Row row, const Column column) noexcept;
 
   /*
    * Returns a copy of the tower at the given position for read-only tasks.
    */
-  Tower GetTowerAt(const uint8_t row, const uint8_t column) const noexcept;
+  Tower GetTowerAt(const Row row, const Column column) const noexcept;
 
-  const uint8_t height;
-  const uint8_t width;
+  const Row height;
+  const Column width;
 
  private:
   std::vector<Tower> field;

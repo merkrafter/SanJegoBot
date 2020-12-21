@@ -24,9 +24,9 @@ struct Move {
  public:
   const Direction direction;
   // row of the tower that should be moved
-  const uint8_t row;
+  const Row row;
   // column of the tower that should be moved
-  const uint8_t column;
+  const Column column;
 };
 
 class StandardRuleset {
