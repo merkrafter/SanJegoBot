@@ -15,7 +15,8 @@ set(CMAKE_CXX_STANDARD 20)
 add_library(sanjego STATIC)
 
 target_sources(sanjego PRIVATE include/libsanjego/gameobjects.hpp
-                               src/gameobjects.cpp)
+                               src/gameobjects.cpp 
+                               include/libsanjego/rulesets.hpp)
 
 # Internal file can import the header files directly.
 target_include_directories(
