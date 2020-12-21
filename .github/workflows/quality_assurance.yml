@@ -1,0 +1,49 @@
+name: Quality Assurance
+
+on: [push]
+env:
+  CMAKE_BUILD_TYPE: Release
+
+jobs:
+  # Runs the unit tests in this project
+  # This is the default cmake job definition from GitHub
+  ctest:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Create Build Environment
+      run: cmake -E make_directory ${{runner.workspace}}/build
+
+    - name: Configure CMake
+      shell: bash
+      working-directory: ${{runner.workspace}}/build
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE
+
+    - name: Build
+      working-directory: ${{runner.workspace}}/build
+      shell: bash
+      run: cmake --build . --config $CMAKE_BUILD_TYPE
+
+    - name: Test
+      working-directory: ${{runner.workspace}}/build
+      shell: bash
+      run: ctest -C $CMAKE_BUILD_TYPE
+  
+  cmake-lint:
+  # Checks whether all CMakeLists.txt files are well-formed.
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install cmake-format
+      run: |
+        python -m pip install --upgrade pip
+        pip install cmake-format
+    - name: Check style of CMakeLists.txt
+      run: |
+        find . -name "CMakeLists.txt" | xargs cmake-format --check
