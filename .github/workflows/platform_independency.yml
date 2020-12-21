@@ -1,0 +1,55 @@
+name: Platform independency
+
+# This workflow includes a matrix build for different operating system/compiler combinations
+# to ensure some sort of platform independency.
+# In these environments, a "normal" build and unit test job is executed.
+
+on:
+  schedule:
+    # This workflow is costly, hence it is only executed nightly on three days a week.
+    # Those should be sufficient as there is no development progress every day.
+    - cron: '0 0 * * 1,3,5'
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        # Platform independency spans several operating systems and popular compilers.
+        # To save runs that (probably) succeed anyway, do not define a full cross product of "os * cxx"
+        include:
+          - os: ubuntu-latest
+            cxx: g++
+          - os: ubuntu-latest
+            cxx: clang++
+          - os: windows-latest
+            cxx: cl.exe
+    
+    # The CMake configure and build commands are platform agnostic and should work equally
+    # well on Windows or GNU/Linux.
+    runs-on: ${{matrix.os}}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Create Build Environment
+      run: cmake -E make_directory ${{runner.workspace}}/build
+
+    - name: Configure CMake
+      # Use a bash shell so we can use the same syntax for environment variable
+      # access regardless of the host operating system
+      shell: bash
+      working-directory: ${{runner.workspace}}/build
+      run: cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_CXX_COMPILER=${{matrix.cxx}} -S $GITHUB_WORKSPACE -B .
+
+    - name: Build
+      working-directory: ${{runner.workspace}}/build
+      shell: bash
+      run: cmake --build . --config $BUILD_TYPE
+
+    - name: Test
+      working-directory: ${{runner.workspace}}/build
+      shell: bash
+      run: ctest -C $BUILD_TYPE --verbose
