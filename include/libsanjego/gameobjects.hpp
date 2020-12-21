@@ -34,9 +34,10 @@ class GameField {
 
   Tower& TowerAt(const uint8_t row, const uint8_t column) noexcept;
 
- private:
   const uint8_t height;
   const uint8_t width;
+
+ private:
   std::vector<Tower> field;
 };
 }  // namespace libsanjego
