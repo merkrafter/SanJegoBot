@@ -11,3 +11,5 @@ project(
 
 set(CMAKE_CXX_STANDARD 20)
 
+# Static linking is enabled to improve start-up speed
+add_library(sanjego STATIC)
