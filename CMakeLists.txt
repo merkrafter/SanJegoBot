@@ -13,3 +13,15 @@ set(CMAKE_CXX_STANDARD 20)
 
 # Static linking is enabled to improve start-up speed
 add_library(sanjego STATIC)
+
+find_package(Catch2)
+if(NOT Catch2_FOUND)
+  include(FetchContent)
+  FetchContent_Declare(
+    Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+    GIT_TAG v2.13.1)
+  FetchContent_MakeAvailable(Catch2)
+endif()
+enable_testing()
+add_subdirectory(test)
