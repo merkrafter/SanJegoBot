@@ -62,4 +62,11 @@ class GameField {
  private:
   std::vector<Tower> field;
 };
+
+/*
+ * Factory function for GameFields that chooses the most efficient
+ * implementation for the given width and height.
+ */
+template <gf_size_t HEIGHT, gf_size_t WIDTH>
+GameField CreateGameField();
 }  // namespace libsanjego
