@@ -24,18 +24,21 @@ class Tower {
   uint8_t representation;
 };
 
+// Type that represents the size of a game field.
+typedef uint8_t gf_size_t;
+
 struct Row {
  public:
-  constexpr Row(const uint8_t value) noexcept : value(value){};
-  constexpr operator uint8_t() const noexcept { return value; }
-  uint8_t value;
+  constexpr Row(const gf_size_t value) noexcept : value(value){};
+  constexpr operator gf_size_t() const noexcept { return value; }
+  gf_size_t value;
 };
 
 struct Column {
  public:
-  constexpr Column(const uint8_t value) noexcept : value(value){};
-  constexpr operator uint8_t() const noexcept { return value; }
-  uint8_t value;
+  constexpr Column(const gf_size_t value) noexcept : value(value){};
+  constexpr operator gf_size_t() const noexcept { return value; }
+  gf_size_t value;
 };
 
 class GameField {
@@ -46,7 +49,7 @@ class GameField {
    */
   GameField(const Row height, const Column width);
 
-  Tower& TowerAt(const Row row, const Column column) noexcept;
+  Tower &TowerAt(const Row row, const Column column) noexcept;
 
   /*
    * Returns a copy of the tower at the given position for read-only tasks.
