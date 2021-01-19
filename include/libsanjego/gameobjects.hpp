@@ -15,12 +15,12 @@ enum struct Player : uint8_t { FIRST = 0, SECOND = 1 };
  * implementation.
  */
 class Tower {
- public:
+public:
   Tower(const Player owner);
   Player Owner() const noexcept;
   uint8_t Height() const noexcept;
 
- private:
+private:
   uint8_t representation;
 };
 
@@ -28,21 +28,21 @@ class Tower {
 typedef uint8_t gf_size_t;
 
 struct Row {
- public:
+public:
   constexpr Row(const gf_size_t value) noexcept : value(value){};
   constexpr operator gf_size_t() const noexcept { return value; }
   gf_size_t value;
 };
 
 struct Column {
- public:
+public:
   constexpr Column(const gf_size_t value) noexcept : value(value){};
   constexpr operator gf_size_t() const noexcept { return value; }
   gf_size_t value;
 };
 
 class GameField {
- public:
+public:
   /*
    * Creates a new GameField by placing towers of height 1 on the field
    * with the owners alternating in a checkerboard-like pattern.
@@ -59,7 +59,7 @@ class GameField {
   const Row height;
   const Column width;
 
- private:
+private:
   std::vector<Tower> field;
 };
 
@@ -69,4 +69,4 @@ class GameField {
  */
 template <gf_size_t HEIGHT, gf_size_t WIDTH>
 GameField CreateGameField();
-}  // namespace libsanjego
+} // namespace libsanjego

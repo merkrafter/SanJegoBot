@@ -40,4 +40,4 @@ Tower& GameField::TowerAt(const Row row, const Column column) noexcept {
 Tower GameField::GetTowerAt(const Row row, const Column column) const noexcept {
   return this->field[dual_to_single_index(row, column, this->height)];
 }
-}  // namespace libsanjego
+} // namespace libsanjego
