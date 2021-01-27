@@ -38,8 +38,7 @@ tower_size_t Tower::Height() const noexcept {
 }
 
 namespace details {
-constexpr uint32_t to_array_index(const Position position,
-                                  const RowNr boardHeight) {
+uint32_t to_array_index(const Position position, const RowNr boardHeight) {
   return position.row * boardHeight + position.column;
 }
 

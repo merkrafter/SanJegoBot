@@ -10,23 +10,20 @@ using namespace libsanjego;
 
 TEST_CASE("Basic move is allowed", "[fast]") {
   const Board<2, 2> board;
-  const StandardRuleset ruleset;
 
   const Move move = {0, 0, Direction::EAST};
-  REQUIRE(ruleset.MoveIsAllowedOn(board, move, Color::BLUE));
+  REQUIRE(MoveIsAllowedOn<2, 2>(board, move, Color::BLUE));
 }
 
 TEST_CASE("On a 1x1 board, any move is illegal", "[fast]") {
   const Board<1, 1> board;
-  const StandardRuleset ruleset;
 
   Move move{0, 0, Direction::NORTH};
-  REQUIRE_FALSE(ruleset.MoveIsAllowedOn(board, move, Color::BLUE));
+  REQUIRE_FALSE(MoveIsAllowedOn<1, 1>(board, move, Color::BLUE));
 }
 
 TEST_CASE("Moves over border are illegal", "[fast]") {
-  const Board<2, 2> board;
-  const StandardRuleset ruleset;
+  const auto board = CreateBoard<2, 2>();
 
   std::vector<Move> moves{
       Move{0, 0, Direction::NORTH},
@@ -37,22 +34,21 @@ TEST_CASE("Moves over border are illegal", "[fast]") {
 
   for (int i = 0; i < moves.size(); i++) {
     const auto move = moves[i];
-    REQUIRE_FALSE(ruleset.MoveIsAllowedOn(board, move, Color::BLUE));
+    REQUIRE_FALSE(MoveIsAllowedOn<2, 2>(board, move, Color::BLUE));
   }
 }
 
 TEST_CASE("Moving a tower is illegal if a player does not own it", "[fast]") {
   const Board<2, 2> board;
-  const StandardRuleset ruleset;
 
   SECTION("First player moves second player's tower") {
     const Move move{0, 1, Direction::WEST};
-    REQUIRE_FALSE(ruleset.MoveIsAllowedOn(board, move, Color::BLUE));
+    REQUIRE_FALSE(MoveIsAllowedOn<2, 2>(board, move, Color::BLUE));
   }
 
   SECTION("Second player moves first player's tower") {
     const Move move{0, 0, Direction::EAST};
-    REQUIRE_FALSE(ruleset.MoveIsAllowedOn(board, move, Color::Yellow));
+    REQUIRE_FALSE(MoveIsAllowedOn<2, 2>(board, move, Color::Yellow));
   }
 }
 // 3. move not allowed if no target tower
@@ -62,12 +58,10 @@ TEST_CASE("Moving a tower is illegal if a player does not own it", "[fast]") {
 // the first player.
 TEST_CASE("Newly created Board of size 1 should have value 1", "[fast]") {
   const Board<1, 1> board;
-  const StandardRuleset ruleset;
-  REQUIRE(ruleset.ComputeValueOf(board) == 1);
+  REQUIRE(ComputeValueOf<1, 1>(board) == 1);
 }
 
 TEST_CASE("Newly created Board should have value 0", "[fast]") {
   const Board<2, 2> board;
-  const StandardRuleset ruleset;
-  REQUIRE(ruleset.ComputeValueOf(board) == 0);
+  REQUIRE(ComputeValueOf<2, 2>(board) == 0);
 }

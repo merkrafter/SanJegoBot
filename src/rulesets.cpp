@@ -18,39 +18,9 @@
  */
 #include "rulesets.hpp"
 
-namespace libsanjego {
+namespace libsanjego::details {
 
-template <board_size_t HEIGHT, board_size_t WIDTH>
-inline bool exceeds_border(const Board<HEIGHT, WIDTH>& field,
-                           const Move& move) {
-  return move.from.row == 0 && move.direction == Direction::NORTH ||
-         move.from.column == 0 && move.direction == Direction::WEST ||
-         move.from.row + 1 >= field.height &&
-             move.direction == Direction::SOUTH ||
-         move.from.column + 1 >= field.width &&
-             move.direction == Direction::EAST;
-}
-
-inline bool owns_tower(const Color active_player, const Tower tower) {
+bool owns_tower(const Color active_player, const Tower tower) {
   return tower.Top() == active_player;
 }
-
-template <board_size_t HEIGHT, board_size_t WIDTH>
-bool StandardRuleset::MoveIsAllowedOn(
-    const Board<HEIGHT, WIDTH>& field, const Move& move,
-    const Color active_player) const noexcept {
-  if (exceeds_border(field, move)) {
-    return false;
-  }
-  if (!owns_tower(active_player,
-                  field.GetTowerAt({move.from.row, move.from.column}))) {
-    return false;
-  }
-  return true;
-}
-template <board_size_t HEIGHT, board_size_t WIDTH>
-int8_t StandardRuleset::ComputeValueOf(
-    const Board<HEIGHT, WIDTH>& field) const noexcept {
-  return field.height * field.width == 1;
-}
-}  // namespace libsanjego
+}  // namespace libsanjego::details

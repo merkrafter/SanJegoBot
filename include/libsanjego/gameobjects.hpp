@@ -51,12 +51,12 @@ struct Position {
 };
 
 namespace details {
-constexpr uint32_t to_array_index(Position position, RowNr boardHeight);
+uint32_t to_array_index(Position position, RowNr boardHeight);
 void set_checkerboard_pattern(std::vector<Tower> field, RowNr height,
                               ColumnNr width);
 }  // namespace details
 
-template <RowNr HEIGHT, ColumnNr WIDTH>
+template <board_size_t HEIGHT, board_size_t WIDTH>
 class Board {
  public:
   /*
@@ -88,5 +88,7 @@ class Board {
  * implementation for the given width and height.
  */
 template <board_size_t HEIGHT, board_size_t WIDTH>
-Board<HEIGHT, WIDTH> CreateBoard();
+Board<HEIGHT, WIDTH> CreateBoard() {
+  return Board<HEIGHT, WIDTH>();
+}
 }  // namespace libsanjego
