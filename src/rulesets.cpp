@@ -23,10 +23,12 @@ namespace libsanjego {
 template <board_size_t HEIGHT, board_size_t WIDTH>
 inline bool exceeds_border(const Board<HEIGHT, WIDTH>& field,
                            const Move& move) {
-  return move.row == 0 && move.direction == Direction::NORTH ||
-         move.column == 0 && move.direction == Direction::WEST ||
-         move.row + 1 >= field.height && move.direction == Direction::SOUTH ||
-         move.column + 1 >= field.width && move.direction == Direction::EAST;
+  return move.from.row == 0 && move.direction == Direction::NORTH ||
+         move.from.column == 0 && move.direction == Direction::WEST ||
+         move.from.row + 1 >= field.height &&
+             move.direction == Direction::SOUTH ||
+         move.from.column + 1 >= field.width &&
+             move.direction == Direction::EAST;
 }
 
 inline bool owns_tower(const Color active_player, const Tower tower) {
@@ -40,7 +42,8 @@ bool StandardRuleset::MoveIsAllowedOn(
   if (exceeds_border(field, move)) {
     return false;
   }
-  if (!owns_tower(active_player, field.GetTowerAt(move.row, move.column))) {
+  if (!owns_tower(active_player,
+                  field.GetTowerAt({move.from.row, move.from.column}))) {
     return false;
   }
   return true;

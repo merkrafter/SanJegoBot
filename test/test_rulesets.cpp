@@ -12,7 +12,7 @@ TEST_CASE("Basic move is allowed", "[fast]") {
   const Board<2, 2> board;
   const StandardRuleset ruleset;
 
-  const Move move = {Direction::EAST, 0, 0};
+  const Move move = {0, 0, Direction::EAST};
   REQUIRE(ruleset.MoveIsAllowedOn(board, move, Color::BLUE));
 }
 
@@ -20,7 +20,7 @@ TEST_CASE("On a 1x1 board, any move is illegal", "[fast]") {
   const Board<1, 1> board;
   const StandardRuleset ruleset;
 
-  Move move{Direction::NORTH, 0, 0};
+  Move move{0, 0, Direction::NORTH};
   REQUIRE_FALSE(ruleset.MoveIsAllowedOn(board, move, Color::BLUE));
 }
 
@@ -29,10 +29,10 @@ TEST_CASE("Moves over border are illegal", "[fast]") {
   const StandardRuleset ruleset;
 
   std::vector<Move> moves{
-      Move{Direction::NORTH, 0, 0},
-      Move{Direction::WEST, 0, 0},
-      Move{Direction::EAST, 1, 1},
-      Move{Direction::SOUTH, 1, 1},
+      Move{0, 0, Direction::NORTH},
+      Move{0, 0, Direction::WEST},
+      Move{1, 1, Direction::EAST},
+      Move{1, 1, Direction::SOUTH},
   };
 
   for (int i = 0; i < moves.size(); i++) {
@@ -46,12 +46,12 @@ TEST_CASE("Moving a tower is illegal if a player does not own it", "[fast]") {
   const StandardRuleset ruleset;
 
   SECTION("First player moves second player's tower") {
-    const Move move{Direction::WEST, 0, 1};
+    const Move move{0, 1, Direction::WEST};
     REQUIRE_FALSE(ruleset.MoveIsAllowedOn(board, move, Color::BLUE));
   }
 
   SECTION("Second player moves first player's tower") {
-    const Move move{Direction::EAST, 0, 0};
+    const Move move{0, 0, Direction::EAST};
     REQUIRE_FALSE(ruleset.MoveIsAllowedOn(board, move, Color::Yellow));
   }
 }

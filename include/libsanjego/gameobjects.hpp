@@ -44,8 +44,15 @@ class Tower {
   tower_size_t representation;
 };
 
+namespace details {
 void set_checkerboard_pattern(std::vector<Tower> field, RowNr height,
                               ColumnNr width);
+}  // namespace details
+
+struct Position {
+  RowNr row;
+  ColumnNr column;
+};
 
 template <RowNr HEIGHT, ColumnNr WIDTH>
 class Board {
@@ -55,15 +62,15 @@ class Board {
    * with the colors alternating in a checkerboard-like pattern.
    */
   Board() : height(HEIGHT), width(WIDTH) {
-    set_checkerboard_pattern(field, HEIGHT, WIDTH);
+    details::set_checkerboard_pattern(field, HEIGHT, WIDTH);
   }
 
-  Tower &TowerAt(RowNr row, ColumnNr column) noexcept;
+  Tower &TowerAt(Position position) noexcept;
 
   /*
    * Returns a copy of the tower at the given position for read-only tasks.
    */
-  Tower GetTowerAt(RowNr row, ColumnNr column) const noexcept;
+  Tower GetTowerAt(Position position) const noexcept;
 
   const RowNr height;
   const ColumnNr width;

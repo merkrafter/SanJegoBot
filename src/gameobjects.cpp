@@ -37,31 +37,33 @@ tower_size_t Tower::Height() const noexcept {
   return without_owner(this->representation);
 }
 
-constexpr uint32_t dual_to_single_index(const RowNr row, const ColumnNr column,
-                                        const RowNr height) {
-  return row * height + column;
+constexpr uint32_t to_array_index(const Position position,
+                                  const RowNr boardHeight) {
+  return position.row * boardHeight + position.column;
 }
 
+namespace details {
 void set_checkerboard_pattern(std::vector<Tower> field, const RowNr height,
                               const ColumnNr width) {
   field.reserve(height * width);
   for (int row = 0; row < height; row++) {
     for (int col = 0; col < width; col++) {
-      const auto idx = dual_to_single_index(row, col, height);
+      const auto idx = to_array_index({row, col}, height);
       field[idx] = Tower(static_cast<Color>((row + col) % 2));
     }
   }
 }
+}  // namespace details
 
 template <board_size_t HEIGHT, board_size_t WIDTH>
-Tower &Board<HEIGHT, WIDTH>::TowerAt(const RowNr row,
-                                     const ColumnNr column) noexcept {
-  return this->field[dual_to_single_index(row, column, this->height)];
+Tower &Board<HEIGHT, WIDTH>::TowerAt(const Position position) noexcept {
+  return this
+      ->field[to_array_index(position.row, position.column, this->height)];
 }
 
 template <board_size_t HEIGHT, board_size_t WIDTH>
-Tower Board<HEIGHT, WIDTH>::GetTowerAt(const RowNr row,
-                                       const ColumnNr column) const noexcept {
-  return this->field[dual_to_single_index(row, column, this->height)];
+Tower Board<HEIGHT, WIDTH>::GetTowerAt(const Position position) const noexcept {
+  return this
+      ->field[to_array_index(position.row, position.column, this->height)];
 }
 }  // namespace libsanjego

@@ -40,11 +40,8 @@ enum class Direction {
  */
 struct Move {
  public:
+  const Position from;
   const Direction direction;
-  // row of the tower that should be moved
-  const RowNr row;
-  // column of the tower that should be moved
-  const ColumnNr column;
 };
 
 class StandardRuleset {
