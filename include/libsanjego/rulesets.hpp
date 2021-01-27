@@ -57,10 +57,10 @@ class StandardRuleset {
    */
   template <board_size_t HEIGHT, board_size_t WIDTH>
   bool MoveIsAllowedOn(const GameField<HEIGHT, WIDTH> &, const Move &,
-                       const Player active_player) const noexcept;
+                       const Color active_player) const noexcept;
 
   /*
-   * Returns the gametheoretical value of the given game field from the first
+   * Returns the game-theoretical value of the given game field from the first
    * player's point of view, that is positive values indicate a better position
    * for the first player while negative values are better for the second.
    */

@@ -29,14 +29,14 @@ inline bool exceeds_border(const GameField<HEIGHT, WIDTH>& field,
          move.column + 1 >= field.width && move.direction == Direction::EAST;
 }
 
-inline bool owns_tower(const Player active_player, const Tower tower) {
-  return tower.Owner() == active_player;
+inline bool owns_tower(const Color active_player, const Tower tower) {
+  return tower.Top() == active_player;
 }
 
 template <board_size_t HEIGHT, board_size_t WIDTH>
 bool StandardRuleset::MoveIsAllowedOn(
     const GameField<HEIGHT, WIDTH>& field, const Move& move,
-    const Player active_player) const noexcept {
+    const Color active_player) const noexcept {
   if (exceeds_border(field, move)) {
     return false;
   }

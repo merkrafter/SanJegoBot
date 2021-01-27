@@ -24,7 +24,7 @@
 #include "types.hpp"
 
 namespace libsanjego {
-enum struct Player : uint8_t { FIRST = 0, SECOND = 1 };
+enum struct Color : uint8_t { BLUE = 0, Yellow = 1 };
 
 /*
  * This Tower implementation does not preserve the actual structure,
@@ -35,12 +35,12 @@ enum struct Player : uint8_t { FIRST = 0, SECOND = 1 };
  * implementation.
  */
 class Tower {
-public:
-  Tower(const Player owner);
-  Player Owner() const noexcept;
+ public:
+  Tower(Color color);
+  Color Top() const noexcept;
   tower_size_t Height() const noexcept;
 
-private:
+ private:
   tower_size_t representation;
 };
 

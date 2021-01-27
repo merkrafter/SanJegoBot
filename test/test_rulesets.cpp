@@ -9,23 +9,23 @@
 using namespace libsanjego;
 
 TEST_CASE("Basic move is allowed", "[fast]") {
-  const GameField field(2, 2);
+  const Board<2, 2> board;
   const StandardRuleset ruleset;
 
   const Move move = {Direction::EAST, 0, 0};
-  REQUIRE(ruleset.MoveIsAllowedOn(field, move, Player::FIRST));
+  REQUIRE(ruleset.MoveIsAllowedOn(board, move, Color::BLUE));
 }
 
-TEST_CASE("On a 1x1 field, any move is illegal", "[fast]") {
-  const GameField field(1, 1);
+TEST_CASE("On a 1x1 board, any move is illegal", "[fast]") {
+  const Board<1, 1> board;
   const StandardRuleset ruleset;
 
   Move move{Direction::NORTH, 0, 0};
-  REQUIRE_FALSE(ruleset.MoveIsAllowedOn(field, move, Player::FIRST));
+  REQUIRE_FALSE(ruleset.MoveIsAllowedOn(board, move, Color::BLUE));
 }
 
 TEST_CASE("Moves over border are illegal", "[fast]") {
-  const GameField field(2, 2);
+  const Board<2, 2> board;
   const StandardRuleset ruleset;
 
   std::vector<Move> moves{
@@ -37,37 +37,37 @@ TEST_CASE("Moves over border are illegal", "[fast]") {
 
   for (int i = 0; i < moves.size(); i++) {
     const auto move = moves[i];
-    REQUIRE_FALSE(ruleset.MoveIsAllowedOn(field, move, Player::FIRST));
+    REQUIRE_FALSE(ruleset.MoveIsAllowedOn(board, move, Color::BLUE));
   }
 }
 
 TEST_CASE("Moving a tower is illegal if a player does not own it", "[fast]") {
-  const GameField field(2, 2);
+  const Board<2, 2> board;
   const StandardRuleset ruleset;
 
   SECTION("First player moves second player's tower") {
     const Move move{Direction::WEST, 0, 1};
-    REQUIRE_FALSE(ruleset.MoveIsAllowedOn(field, move, Player::FIRST));
+    REQUIRE_FALSE(ruleset.MoveIsAllowedOn(board, move, Color::BLUE));
   }
 
   SECTION("Second player moves first player's tower") {
     const Move move{Direction::EAST, 0, 0};
-    REQUIRE_FALSE(ruleset.MoveIsAllowedOn(field, move, Player::SECOND));
+    REQUIRE_FALSE(ruleset.MoveIsAllowedOn(board, move, Color::Yellow));
   }
 }
 // 3. move not allowed if no target tower
 // 4. move not allowed if no source tower
 
-// In this scenario, there is only one tower on the field which belongs to
+// In this scenario, there is only one tower on the board which belongs to
 // the first player.
-TEST_CASE("Newly created Gamefield of size 1 should have value 1", "[fast]") {
-  const GameField field(1, 1);
+TEST_CASE("Newly created Board of size 1 should have value 1", "[fast]") {
+  const Board<1, 1> board;
   const StandardRuleset ruleset;
-  REQUIRE(ruleset.ComputeValueOf(field) == 1);
+  REQUIRE(ruleset.ComputeValueOf(board) == 1);
 }
 
-TEST_CASE("Newly created Gamefield should have value 0", "[fast]") {
-  const GameField field(2, 2);
+TEST_CASE("Newly created Board should have value 0", "[fast]") {
+  const Board<2, 2> board;
   const StandardRuleset ruleset;
-  REQUIRE(ruleset.ComputeValueOf(field) == 0);
+  REQUIRE(ruleset.ComputeValueOf(board) == 0);
 }
