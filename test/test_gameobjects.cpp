@@ -41,26 +41,26 @@ TEST_CASE("Tower should store 2nd player as owner correctly", "[fast]") {
 
 TEST_CASE("Top-left tower of newly created board is first player's", "[fast]") {
   Board<2, 2> board;
-  const auto tower = board.TowerAt({0, 0});
-  REQUIRE(tower.Top() == Color::BLUE);
+  const std::optional<Tower> tower = board.GetTowerAt({0, 0});
+  REQUIRE(tower.value().Top() == Color::BLUE);
 }
 
 TEST_CASE("Tower at (0,1) of newly created board is second player's",
           "[fast]") {
   Board<2, 2> board;
-  const auto tower = board.TowerAt({0, 1});
-  REQUIRE(tower.Top() == Color::Yellow);
+  const std::optional<Tower> tower = board.GetTowerAt({0, 1});
+  REQUIRE(tower.value().Top() == Color::Yellow);
 }
 
 TEST_CASE("Tower at (1,0) of newly created board is second player's",
           "[fast]") {
   Board<2, 2> board;
-  const auto tower = board.TowerAt({1, 0});
-  REQUIRE(tower.Top() == Color::Yellow);
+  const std::optional<Tower> tower = board.GetTowerAt({1, 0});
+  REQUIRE(tower.value().Top() == Color::Yellow);
 }
 
 TEST_CASE("Tower at (1,1) of newly created board is first player's", "[fast]") {
   Board<2, 2> board;
-  const auto tower = board.TowerAt({1, 1});
-  REQUIRE(tower.Top() == Color::BLUE);
+  const std::optional<Tower> tower = board.GetTowerAt({1, 1});
+  REQUIRE(tower.value().Top() == Color::BLUE);
 }

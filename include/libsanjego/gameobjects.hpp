@@ -19,6 +19,7 @@
 #pragma once
 
 #include <cstdint>
+#include <optional>
 #include <vector>
 
 #include "types.hpp"
@@ -44,15 +45,16 @@ class Tower {
   tower_size_t representation;
 };
 
-namespace details {
-void set_checkerboard_pattern(std::vector<Tower> field, RowNr height,
-                              ColumnNr width);
-}  // namespace details
-
 struct Position {
   RowNr row;
   ColumnNr column;
 };
+
+namespace details {
+constexpr uint32_t to_array_index(Position position, RowNr boardHeight);
+void set_checkerboard_pattern(std::vector<Tower> field, RowNr height,
+                              ColumnNr width);
+}  // namespace details
 
 template <RowNr HEIGHT, ColumnNr WIDTH>
 class Board {
@@ -65,12 +67,14 @@ class Board {
     details::set_checkerboard_pattern(field, HEIGHT, WIDTH);
   }
 
-  Tower &TowerAt(Position position) noexcept;
-
   /*
-   * Returns a copy of the tower at the given position for read-only tasks.
+   * Returns a copy of the tower at the given position for read-only tasks if
+   * the board has a tower at the specified position.
    */
-  Tower GetTowerAt(Position position) const noexcept;
+  [[nodiscard]] std::optional<Tower> GetTowerAt(
+      Position position) const noexcept {
+    return this->field[details::to_array_index(position, this->height)];
+  }
 
   const RowNr height;
   const ColumnNr width;

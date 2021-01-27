@@ -37,12 +37,12 @@ tower_size_t Tower::Height() const noexcept {
   return without_owner(this->representation);
 }
 
+namespace details {
 constexpr uint32_t to_array_index(const Position position,
                                   const RowNr boardHeight) {
   return position.row * boardHeight + position.column;
 }
 
-namespace details {
 void set_checkerboard_pattern(std::vector<Tower> field, const RowNr height,
                               const ColumnNr width) {
   field.reserve(height * width);
@@ -55,15 +55,4 @@ void set_checkerboard_pattern(std::vector<Tower> field, const RowNr height,
 }
 }  // namespace details
 
-template <board_size_t HEIGHT, board_size_t WIDTH>
-Tower &Board<HEIGHT, WIDTH>::TowerAt(const Position position) noexcept {
-  return this
-      ->field[to_array_index(position.row, position.column, this->height)];
-}
-
-template <board_size_t HEIGHT, board_size_t WIDTH>
-Tower Board<HEIGHT, WIDTH>::GetTowerAt(const Position position) const noexcept {
-  return this
-      ->field[to_array_index(position.row, position.column, this->height)];
-}
 }  // namespace libsanjego
