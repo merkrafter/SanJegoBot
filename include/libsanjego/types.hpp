@@ -51,4 +51,4 @@ struct ColumnNr {
   const board_size_t m_value;
 };
 
-} // namespace libsanjego
+}  // namespace libsanjego

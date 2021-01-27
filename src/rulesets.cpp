@@ -1,8 +1,28 @@
+/*
+ * Copyright 2021 merkrafter
+ *
+ * This file is part of libsanjego.
+ *
+ * libsanjego is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * libsanjego is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with libsanjego. If not, see <https://www.gnu.org/licenses/>.
+ */
 #include "rulesets.hpp"
 
 namespace libsanjego {
 
-inline bool exceeds_border(const GameField& field, const Move& move) {
+template <board_size_t HEIGHT, board_size_t WIDTH>
+inline bool exceeds_border(const GameField<HEIGHT, WIDTH>& field,
+                           const Move& move) {
   return move.row == 0 && move.direction == Direction::NORTH ||
          move.column == 0 && move.direction == Direction::WEST ||
          move.row + 1 >= field.height && move.direction == Direction::SOUTH ||
@@ -13,8 +33,9 @@ inline bool owns_tower(const Player active_player, const Tower tower) {
   return tower.Owner() == active_player;
 }
 
+template <board_size_t HEIGHT, board_size_t WIDTH>
 bool StandardRuleset::MoveIsAllowedOn(
-    const GameField& field, const Move& move,
+    const GameField<HEIGHT, WIDTH>& field, const Move& move,
     const Player active_player) const noexcept {
   if (exceeds_border(field, move)) {
     return false;
@@ -24,7 +45,9 @@ bool StandardRuleset::MoveIsAllowedOn(
   }
   return true;
 }
-int8_t StandardRuleset::ComputeValueOf(const GameField& field) const noexcept {
+template <board_size_t HEIGHT, board_size_t WIDTH>
+int8_t StandardRuleset::ComputeValueOf(
+    const GameField<HEIGHT, WIDTH>& field) const noexcept {
   return field.height * field.width == 1;
 }
 }  // namespace libsanjego

@@ -1,3 +1,21 @@
+/*
+ * Copyright 2021 merkrafter
+ *
+ * This file is part of libsanjego.
+ *
+ * libsanjego is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * libsanjego is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with libsanjego. If not, see <https://www.gnu.org/licenses/>.
+ */
 #pragma once
 
 #include <cstdint>
@@ -24,9 +42,9 @@ struct Move {
  public:
   const Direction direction;
   // row of the tower that should be moved
-  const Row row;
+  const RowNr row;
   // column of the tower that should be moved
-  const Column column;
+  const ColumnNr column;
 };
 
 class StandardRuleset {
@@ -37,7 +55,8 @@ class StandardRuleset {
    * - both contain towers
    * - the source tower is owned by the active player
    */
-  bool MoveIsAllowedOn(const GameField&, const Move&,
+  template <board_size_t HEIGHT, board_size_t WIDTH>
+  bool MoveIsAllowedOn(const GameField<HEIGHT, WIDTH> &, const Move &,
                        const Player active_player) const noexcept;
 
   /*
@@ -45,6 +64,7 @@ class StandardRuleset {
    * player's point of view, that is positive values indicate a better position
    * for the first player while negative values are better for the second.
    */
-  int8_t ComputeValueOf(const GameField&) const noexcept;
+  template <board_size_t HEIGHT, board_size_t WIDTH>
+  int8_t ComputeValueOf(const GameField<HEIGHT, WIDTH> &) const noexcept;
 };
 }  // namespace libsanjego

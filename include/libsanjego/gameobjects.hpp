@@ -1,7 +1,27 @@
+/*
+ * Copyright 2021 merkrafter
+ *
+ * This file is part of libsanjego.
+ *
+ * libsanjego is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * libsanjego is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with libsanjego. If not, see <https://www.gnu.org/licenses/>.
+ */
 #pragma once
 
 #include <cstdint>
 #include <vector>
+
+#include "types.hpp"
 
 namespace libsanjego {
 enum struct Player : uint8_t { FIRST = 0, SECOND = 1 };
@@ -18,46 +38,35 @@ class Tower {
 public:
   Tower(const Player owner);
   Player Owner() const noexcept;
-  uint8_t Height() const noexcept;
+  tower_size_t Height() const noexcept;
 
 private:
-  uint8_t representation;
+  tower_size_t representation;
 };
 
-// Type that represents the size of a game field.
-typedef uint8_t gf_size_t;
+void set_checkerboard_pattern(std::vector<Tower> field, RowNr height,
+                              ColumnNr width);
 
-struct Row {
-public:
-  constexpr Row(const gf_size_t value) noexcept : value(value){};
-  constexpr operator gf_size_t() const noexcept { return value; }
-  gf_size_t value;
-};
-
-struct Column {
-public:
-  constexpr Column(const gf_size_t value) noexcept : value(value){};
-  constexpr operator gf_size_t() const noexcept { return value; }
-  gf_size_t value;
-};
-
+template <RowNr HEIGHT, ColumnNr WIDTH>
 class GameField {
-public:
+ public:
   /*
    * Creates a new GameField by placing towers of height 1 on the field
    * with the owners alternating in a checkerboard-like pattern.
    */
-  GameField(const Row height, const Column width);
+  GameField() : height(HEIGHT), width(WIDTH) {
+    set_checkerboard_pattern(field, HEIGHT, WIDTH);
+  }
 
-  Tower &TowerAt(const Row row, const Column column) noexcept;
+  Tower &TowerAt(RowNr row, ColumnNr column) noexcept;
 
   /*
    * Returns a copy of the tower at the given position for read-only tasks.
    */
-  Tower GetTowerAt(const Row row, const Column column) const noexcept;
+  Tower GetTowerAt(RowNr row, ColumnNr column) const noexcept;
 
-  const Row height;
-  const Column width;
+  const RowNr height;
+  const ColumnNr width;
 
 private:
   std::vector<Tower> field;
@@ -67,6 +76,6 @@ private:
  * Factory function for GameFields that chooses the most efficient
  * implementation for the given width and height.
  */
-template <gf_size_t HEIGHT, gf_size_t WIDTH>
-GameField CreateGameField();
-} // namespace libsanjego
+template <board_size_t HEIGHT, board_size_t WIDTH>
+GameField<HEIGHT, WIDTH> CreateGameField();
+}  // namespace libsanjego
