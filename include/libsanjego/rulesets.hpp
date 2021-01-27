@@ -51,12 +51,12 @@ class StandardRuleset {
  public:
   /*
    * In this ruleset, a move is allowed if all these conditions hold:
-   * - both the source and target position are on the game field
+   * - both the source and target position are on the board
    * - both contain towers
    * - the source tower is owned by the active player
    */
   template <board_size_t HEIGHT, board_size_t WIDTH>
-  bool MoveIsAllowedOn(const GameField<HEIGHT, WIDTH> &, const Move &,
+  bool MoveIsAllowedOn(const Board<HEIGHT, WIDTH> &, const Move &,
                        const Color active_player) const noexcept;
 
   /*
@@ -65,6 +65,6 @@ class StandardRuleset {
    * for the first player while negative values are better for the second.
    */
   template <board_size_t HEIGHT, board_size_t WIDTH>
-  int8_t ComputeValueOf(const GameField<HEIGHT, WIDTH> &) const noexcept;
+  int8_t ComputeValueOf(const Board<HEIGHT, WIDTH> &) const noexcept;
 };
 }  // namespace libsanjego

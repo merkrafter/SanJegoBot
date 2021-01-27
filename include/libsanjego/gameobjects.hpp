@@ -48,13 +48,13 @@ void set_checkerboard_pattern(std::vector<Tower> field, RowNr height,
                               ColumnNr width);
 
 template <RowNr HEIGHT, ColumnNr WIDTH>
-class GameField {
+class Board {
  public:
   /*
-   * Creates a new GameField by placing towers of height 1 on the field
-   * with the owners alternating in a checkerboard-like pattern.
+   * Creates a new Board by placing towers of height 1 on the field
+   * with the colors alternating in a checkerboard-like pattern.
    */
-  GameField() : height(HEIGHT), width(WIDTH) {
+  Board() : height(HEIGHT), width(WIDTH) {
     set_checkerboard_pattern(field, HEIGHT, WIDTH);
   }
 
@@ -68,14 +68,14 @@ class GameField {
   const RowNr height;
   const ColumnNr width;
 
-private:
+ private:
   std::vector<Tower> field;
 };
 
 /*
- * Factory function for GameFields that chooses the most efficient
+ * Factory function for Boards that chooses the most efficient
  * implementation for the given width and height.
  */
 template <board_size_t HEIGHT, board_size_t WIDTH>
-GameField<HEIGHT, WIDTH> CreateGameField();
+Board<HEIGHT, WIDTH> CreateBoard();
 }  // namespace libsanjego

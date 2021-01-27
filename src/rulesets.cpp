@@ -21,7 +21,7 @@
 namespace libsanjego {
 
 template <board_size_t HEIGHT, board_size_t WIDTH>
-inline bool exceeds_border(const GameField<HEIGHT, WIDTH>& field,
+inline bool exceeds_border(const Board<HEIGHT, WIDTH>& field,
                            const Move& move) {
   return move.row == 0 && move.direction == Direction::NORTH ||
          move.column == 0 && move.direction == Direction::WEST ||
@@ -35,7 +35,7 @@ inline bool owns_tower(const Color active_player, const Tower tower) {
 
 template <board_size_t HEIGHT, board_size_t WIDTH>
 bool StandardRuleset::MoveIsAllowedOn(
-    const GameField<HEIGHT, WIDTH>& field, const Move& move,
+    const Board<HEIGHT, WIDTH>& field, const Move& move,
     const Color active_player) const noexcept {
   if (exceeds_border(field, move)) {
     return false;
@@ -47,7 +47,7 @@ bool StandardRuleset::MoveIsAllowedOn(
 }
 template <board_size_t HEIGHT, board_size_t WIDTH>
 int8_t StandardRuleset::ComputeValueOf(
-    const GameField<HEIGHT, WIDTH>& field) const noexcept {
+    const Board<HEIGHT, WIDTH>& field) const noexcept {
   return field.height * field.width == 1;
 }
 }  // namespace libsanjego
