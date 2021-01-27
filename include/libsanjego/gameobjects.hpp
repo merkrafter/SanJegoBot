@@ -63,9 +63,7 @@ class Board {
    * Creates a new Board by placing towers of height 1 on the field
    * with the colors alternating in a checkerboard-like pattern.
    */
-  Board() : height(HEIGHT), width(WIDTH) {
-    details::set_checkerboard_pattern(field, HEIGHT, WIDTH);
-  }
+  Board() { details::set_checkerboard_pattern(field, HEIGHT, WIDTH); }
 
   /*
    * Returns a copy of the tower at the given position for read-only tasks if
@@ -73,11 +71,11 @@ class Board {
    */
   [[nodiscard]] std::optional<Tower> GetTowerAt(
       Position position) const noexcept {
-    return this->field[details::to_array_index(position, this->height)];
+    return this->field[details::to_array_index(position, HEIGHT)];
   }
 
-  const RowNr height;
-  const ColumnNr width;
+  [[nodiscard]] constexpr RowNr Height() const noexcept { return HEIGHT; }
+  [[nodiscard]] constexpr ColumnNr Width() const noexcept { return WIDTH; }
 
  private:
   std::vector<Tower> field;
