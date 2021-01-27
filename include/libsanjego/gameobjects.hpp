@@ -37,9 +37,9 @@ enum struct Color : uint8_t { BLUE = 0, Yellow = 1 };
  */
 class Tower {
  public:
-  Tower(Color color);
-  Color Top() const noexcept;
-  tower_size_t Height() const noexcept;
+  explicit Tower(Color color);
+  [[nodiscard]] Color Top() const noexcept;
+  [[nodiscard]] tower_size_t Height() const noexcept;
 
  private:
   tower_size_t representation;
