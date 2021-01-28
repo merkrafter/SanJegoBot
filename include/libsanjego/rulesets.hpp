@@ -24,36 +24,16 @@
 
 namespace libsanjego {
 /*
- * Directions a player can move a tower.
- */
-enum class Direction {
-  NORTH,
-  EAST,
-  SOUTH,
-  WEST,
-};
-
-/*
  * A move a player wants to make in a game.
  * This does not mean a move object is necessarily legal; it depends on the
  * ruleset used.
  */
 struct Move {
- public:
-  const Position from;
-  const Direction direction;
+  const Position source;
+  const Position target;
 };
 
 namespace details {
-template <board_size_t HEIGHT, board_size_t WIDTH>
-bool exceeds_border(const Board<HEIGHT, WIDTH> &board, const Move &move) {
-  return move.from.row == 0 && move.direction == Direction::NORTH ||
-         move.from.column == 0 && move.direction == Direction::WEST ||
-         move.from.row + 1 >= board.Height() &&
-             move.direction == Direction::SOUTH ||
-         move.from.column + 1 >= board.Width() &&
-             move.direction == Direction::EAST;
-}
 
 bool owns_tower(Color, Tower);
 }  // namespace details
@@ -67,12 +47,15 @@ bool owns_tower(Color, Tower);
 template <board_size_t HEIGHT, board_size_t WIDTH>
 bool MoveIsAllowedOn(const Board<HEIGHT, WIDTH> &board, const Move &move,
                      const Color active_player) noexcept {
-  if (details::exceeds_border<HEIGHT, WIDTH>(board, move)) {
+  const std::optional<Tower> sourceTower = board.GetTowerAt(move.source);
+  if (!sourceTower.has_value()) {
     return false;
   }
-  const std::optional<Tower> sourceTower = board.GetTowerAt(move.from);
-  if (sourceTower.has_value() &&
-      !details::owns_tower(active_player, sourceTower.value())) {
+  const std::optional<Tower> targetTower = board.GetTowerAt(move.target);
+  if (!targetTower.has_value()) {
+    return false;
+  }
+  if (!details::owns_tower(active_player, sourceTower.value())) {
     return false;
   }
   return true;

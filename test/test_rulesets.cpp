@@ -11,14 +11,14 @@ using namespace libsanjego;
 TEST_CASE("Basic move is allowed", "[fast]") {
   const Board<2, 2> board;
 
-  const Move move = {0, 0, Direction::EAST};
+  const Move move = {0, 0, 0, 1};
   REQUIRE(MoveIsAllowedOn<2, 2>(board, move, Color::BLUE));
 }
 
 TEST_CASE("On a 1x1 board, any move is illegal", "[fast]") {
   const Board<1, 1> board;
 
-  Move move{0, 0, Direction::NORTH};
+  Move move{0, 0, 0, 1};
   REQUIRE_FALSE(MoveIsAllowedOn<1, 1>(board, move, Color::BLUE));
 }
 
@@ -26,14 +26,11 @@ TEST_CASE("Moves over border are illegal", "[fast]") {
   const auto board = CreateBoard<2, 2>();
 
   std::vector<Move> moves{
-      Move{0, 0, Direction::NORTH},
-      Move{0, 0, Direction::WEST},
-      Move{1, 1, Direction::EAST},
-      Move{1, 1, Direction::SOUTH},
+      Move{1, 1, 1, 2},
+      Move{1, 1, 2, 1},
   };
 
-  for (int i = 0; i < moves.size(); i++) {
-    const auto move = moves[i];
+  for (const auto& move : moves) {
     REQUIRE_FALSE(MoveIsAllowedOn<2, 2>(board, move, Color::BLUE));
   }
 }
@@ -42,12 +39,12 @@ TEST_CASE("Moving a tower is illegal if a player does not own it", "[fast]") {
   const Board<2, 2> board;
 
   SECTION("First player moves second player's tower") {
-    const Move move{0, 1, Direction::WEST};
+    const Move move{0, 1, 0, 0};
     REQUIRE_FALSE(MoveIsAllowedOn<2, 2>(board, move, Color::BLUE));
   }
 
   SECTION("Second player moves first player's tower") {
-    const Move move{0, 0, Direction::EAST};
+    const Move move{0, 0, 0, 1};
     REQUIRE_FALSE(MoveIsAllowedOn<2, 2>(board, move, Color::Yellow));
   }
 }

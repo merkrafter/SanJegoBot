@@ -54,6 +54,16 @@ namespace details {
 uint32_t to_array_index(Position position, RowNr boardHeight);
 void set_checkerboard_pattern(std::vector<Tower> field, RowNr height,
                               ColumnNr width);
+
+/*
+ * Returns whether the given position lies outside the rectangular region
+ * defined by the template parameters and (0,0).
+ */
+template <board_size_t HEIGHT, board_size_t WIDTH>
+bool exceeds_border(const Position &position) {
+  return position.row <= 0 || position.column <= 0 || position.row >= HEIGHT ||
+         position.column >= WIDTH;
+}
 }  // namespace details
 
 template <board_size_t HEIGHT, board_size_t WIDTH>
@@ -71,6 +81,9 @@ class Board {
    */
   [[nodiscard]] std::optional<Tower> GetTowerAt(
       Position position) const noexcept {
+    if (details::exceeds_border<HEIGHT, WIDTH>(position)) {
+      return {};
+    }
     return this->field[details::to_array_index(position, HEIGHT)];
   }
 
