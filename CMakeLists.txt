@@ -6,7 +6,7 @@ project(
   sanjego
   VERSION 0.0.1
   DESCRIPTION "Algorithms for playing the Game of San Jego"
-  HOMEPAGE_URL "https://github.com/merkrafter/sanjego_cpp"
+  HOMEPAGE_URL "https://github.com/merkrafter/SanJegoBot"
   LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
