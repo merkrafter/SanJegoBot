@@ -42,13 +42,11 @@ uint32_t to_array_index(const Position position, const ColumnNr boardWidth) {
   return position.row * boardWidth + position.column;
 }
 
-void set_checkerboard_pattern(std::vector<Tower> field, const RowNr height,
+void set_checkerboard_pattern(std::vector<Tower> &field, const RowNr height,
                               const ColumnNr width) {
-  field.reserve(height * width);
   for (int row = 0; row < height; row++) {
     for (int col = 0; col < width; col++) {
-      const auto idx = to_array_index({row, col}, height);
-      field[idx] = Tower(static_cast<Color>((row + col) % 2));
+      field.push_back(Tower(static_cast<Color>((row + col) % 2)));
     }
   }
 }

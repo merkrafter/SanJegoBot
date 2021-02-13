@@ -53,7 +53,11 @@ struct Position {
 namespace details {
 uint32_t to_array_index(Position position, ColumnNr boardWidth);
 
-void set_checkerboard_pattern(std::vector<Tower> field, RowNr height,
+/*
+ * Initializes the field with height*width towers.
+ * Assumes the field is empty before the operation.
+ */
+void set_checkerboard_pattern(std::vector<Tower> &field, RowNr height,
                               ColumnNr width);
 
 /*
@@ -74,7 +78,10 @@ class Board {
    * Creates a new Board by placing towers of height 1 on the field
    * with the colors alternating in a checkerboard-like pattern.
    */
-  Board() { details::set_checkerboard_pattern(field, HEIGHT, WIDTH); }
+  Board() {
+    field.reserve(HEIGHT * WIDTH);
+    details::set_checkerboard_pattern(field, HEIGHT, WIDTH);
+  }
 
   /*
    * Returns a copy of the tower at the given position for read-only tasks if
