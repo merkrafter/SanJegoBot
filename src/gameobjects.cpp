@@ -38,8 +38,8 @@ tower_size_t Tower::Height() const noexcept {
 }
 
 namespace details {
-uint32_t to_array_index(const Position position, const RowNr boardHeight) {
-  return position.row * boardHeight + position.column;
+uint32_t to_array_index(const Position position, const ColumnNr boardWidth) {
+  return position.row * boardWidth + position.column;
 }
 
 void set_checkerboard_pattern(std::vector<Tower> field, const RowNr height,

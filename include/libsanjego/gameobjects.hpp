@@ -51,7 +51,8 @@ struct Position {
 };
 
 namespace details {
-uint32_t to_array_index(Position position, RowNr boardHeight);
+uint32_t to_array_index(Position position, ColumnNr boardWidth);
+
 void set_checkerboard_pattern(std::vector<Tower> field, RowNr height,
                               ColumnNr width);
 
@@ -84,7 +85,7 @@ class Board {
     if (details::exceeds_border<HEIGHT, WIDTH>(position)) {
       return {};
     }
-    return this->field[details::to_array_index(position, HEIGHT)];
+    return this->field[details::to_array_index(position, Width())];
   }
 
   [[nodiscard]] constexpr RowNr Height() const noexcept { return HEIGHT; }
