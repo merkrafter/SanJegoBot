@@ -61,7 +61,7 @@ void set_checkerboard_pattern(std::vector<Tower> field, RowNr height,
  */
 template <board_size_t HEIGHT, board_size_t WIDTH>
 bool exceeds_border(const Position &position) {
-  return position.row <= 0 || position.column <= 0 || position.row >= HEIGHT ||
+  return position.row < 0 || position.column < 0 || position.row >= HEIGHT ||
          position.column >= WIDTH;
 }
 }  // namespace details
