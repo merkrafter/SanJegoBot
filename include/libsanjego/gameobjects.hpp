@@ -25,7 +25,7 @@
 #include "types.hpp"
 
 namespace libsanjego {
-enum struct Color : uint8_t { BLUE = 0, Yellow = 1 };
+enum struct Color : uint8_t { Blue = 0, Yellow = 1 };
 
 /*
  * This Tower implementation does not preserve the actual structure,

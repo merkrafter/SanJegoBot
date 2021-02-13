@@ -12,14 +12,14 @@ TEST_CASE("Basic move is allowed", "[fast]") {
   const Board<2, 2> board;
 
   const Move move = {0, 0, 0, 1};
-  REQUIRE(MoveIsAllowedOn<2, 2>(board, move, Color::BLUE));
+  REQUIRE(MoveIsAllowedOn<2, 2>(board, move, Color::Blue));
 }
 
 TEST_CASE("On a 1x1 board, any move is illegal", "[fast]") {
   const Board<1, 1> board;
 
   Move move{0, 0, 0, 1};
-  REQUIRE_FALSE(MoveIsAllowedOn<1, 1>(board, move, Color::BLUE));
+  REQUIRE_FALSE(MoveIsAllowedOn<1, 1>(board, move, Color::Blue));
 }
 
 TEST_CASE("Moves over border are illegal", "[fast]") {
@@ -31,7 +31,7 @@ TEST_CASE("Moves over border are illegal", "[fast]") {
   };
 
   for (const auto& move : moves) {
-    REQUIRE_FALSE(MoveIsAllowedOn<2, 2>(board, move, Color::BLUE));
+    REQUIRE_FALSE(MoveIsAllowedOn<2, 2>(board, move, Color::Blue));
   }
 }
 
@@ -40,7 +40,7 @@ TEST_CASE("Moving a tower is illegal if a player does not own it", "[fast]") {
 
   SECTION("First player moves second player's tower") {
     const Move move{0, 1, 0, 0};
-    REQUIRE_FALSE(MoveIsAllowedOn<2, 2>(board, move, Color::BLUE));
+    REQUIRE_FALSE(MoveIsAllowedOn<2, 2>(board, move, Color::Blue));
   }
 
   SECTION("Second player moves first player's tower") {

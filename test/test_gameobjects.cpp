@@ -25,13 +25,13 @@
 using namespace libsanjego;
 
 TEST_CASE("Newly created tower should have height 1", "[fast]") {
-  const Tower tower(Color::BLUE);
+  const Tower tower(Color::Blue);
   REQUIRE(tower.Height() == 1);
 }
 
 TEST_CASE("Tower should store 1st player as owner correctly", "[fast]") {
-  const Tower tower(Color::BLUE);
-  REQUIRE(tower.Top() == Color::BLUE);
+  const Tower tower(Color::Blue);
+  REQUIRE(tower.Top() == Color::Blue);
 }
 
 TEST_CASE("Tower should store 2nd player as owner correctly", "[fast]") {
@@ -42,7 +42,7 @@ TEST_CASE("Tower should store 2nd player as owner correctly", "[fast]") {
 TEST_CASE("Top-left tower of newly created board is first player's", "[fast]") {
   Board<2, 2> board;
   const std::optional<Tower> tower = board.GetTowerAt({0, 0});
-  REQUIRE(tower.value().Top() == Color::BLUE);
+  REQUIRE(tower.value().Top() == Color::Blue);
 }
 
 TEST_CASE("Tower at (0,1) of newly created board is second player's",
@@ -62,5 +62,5 @@ TEST_CASE("Tower at (1,0) of newly created board is second player's",
 TEST_CASE("Tower at (1,1) of newly created board is first player's", "[fast]") {
   Board<2, 2> board;
   const std::optional<Tower> tower = board.GetTowerAt({1, 1});
-  REQUIRE(tower.value().Top() == Color::BLUE);
+  REQUIRE(tower.value().Top() == Color::Blue);
 }
