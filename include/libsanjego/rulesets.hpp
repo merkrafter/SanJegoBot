@@ -35,6 +35,12 @@ struct Move {
 
 namespace details {
 
+/*
+ * Returns whether the player with the given color is allowed to move the given
+ * tower.
+ * In the standard ruleset, this is the case if the top brick of the tower has
+ * the given color.
+ */
 bool owns_tower(Color, Tower);
 }  // namespace details
 
