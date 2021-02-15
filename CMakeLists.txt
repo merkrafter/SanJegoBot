@@ -14,6 +14,22 @@ set(CMAKE_CXX_STANDARD 20)
 # Static linking is enabled to improve start-up speed
 add_library(sanjego STATIC)
 
+target_sources(
+  sanjego
+  PRIVATE include/libsanjego/types.hpp include/libsanjego/gameobjects.hpp
+          src/gameobjects.cpp include/libsanjego/rulesets.hpp src/rulesets.cpp)
+
+# Internal file can import the header files directly.
+target_include_directories(
+  sanjego
+  PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/libsanjego>
+          $<INSTALL_INTERFACE:include/libsanjego>)
+# External projects that link to this library can import the header files with a
+# libsanjego prefix.
+target_include_directories(
+  sanjego PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                 $<INSTALL_INTERFACE:include>)
+
 find_package(Catch2)
 if(NOT Catch2_FOUND)
   include(FetchContent)
