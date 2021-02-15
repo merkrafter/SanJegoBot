@@ -41,8 +41,15 @@ class Tower {
   [[nodiscard]] Color Top() const noexcept;
   [[nodiscard]] tower_size_t Height() const noexcept;
 
+  /*
+   * Adds the given tower on top of *this* one. As a result, their heights are
+   * added and the top brick is now the same as tower's.
+   */
+  void Attach(const Tower tower);
+
  private:
   tower_size_t representation;
+  [[nodiscard]] bool IsEmpty() const noexcept;
 };
 
 struct Position {

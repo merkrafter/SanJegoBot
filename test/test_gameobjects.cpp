@@ -64,3 +64,25 @@ TEST_CASE("Tower at (1,1) of newly created board is first player's", "[fast]") {
   const std::optional<Tower> tower = board.GetTowerAt({1, 1});
   REQUIRE(tower.value().Top() == Color::Blue);
 }
+
+TEST_CASE("Attaching towers adds their heights", "[fast]") {
+  Tower source(Color::Blue);
+  Tower target(Color::Yellow);
+  target.Attach(source);
+  REQUIRE(target.Height() == 2);
+}
+
+TEST_CASE("Attached towers keep their top brick", "[fast]") {
+  SECTION("Yellow on top") {
+    Tower source(Color::Yellow);
+    Tower target(Color::Blue);
+    target.Attach(source);
+    REQUIRE(target.Top() == source.Top());
+  }
+  SECTION("Blue on top") {
+    Tower source(Color::Blue);
+    Tower target(Color::Yellow);
+    target.Attach(source);
+    REQUIRE(target.Top() == source.Top());
+  }
+}
