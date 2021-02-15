@@ -23,16 +23,6 @@
 #include "gameobjects.hpp"
 
 namespace libsanjego {
-/*
- * A move a player wants to make in a game.
- * This does not mean a move object is necessarily legal; it depends on the
- * ruleset used.
- */
-struct Move {
-  const Position source;
-  const Position target;
-};
-
 namespace details {
 
 /*

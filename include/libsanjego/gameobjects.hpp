@@ -71,6 +71,16 @@ bool exceeds_border(const Position &position) {
 }
 }  // namespace details
 
+/*
+ * A move a player wants to make in a game.
+ * This does not mean a move object is necessarily legal; it depends on the
+ * ruleset used.
+ */
+struct Move {
+  const Position source;
+  const Position target;
+};
+
 template <board_size_t HEIGHT, board_size_t WIDTH>
 class Board {
  public:
