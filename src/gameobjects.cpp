@@ -50,6 +50,10 @@ void Tower::Attach(const Tower tower) {
   this->representation = pack(new_height, new_owner);
 }
 
+bool Position::operator==(const Position &other) const noexcept {
+  return this->row == other.row && this->column == other.column;
+}
+
 namespace details {
 uint32_t to_array_index(const Position position, const ColumnNr boardWidth) {
   return position.row * boardWidth + position.column;

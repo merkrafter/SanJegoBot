@@ -86,3 +86,16 @@ TEST_CASE("Attached towers keep their top brick", "[fast]") {
     REQUIRE(target.Top() == source.Top());
   }
 }
+
+TEST_CASE("Positions are equal if both coordinates are equal", "[fast]") {
+  const Position pos1{0, 1};
+  const Position pos2{0, 1};
+  REQUIRE(pos1 == pos2);
+}
+
+TEST_CASE("Positions are not equal if their coordinates are swapped",
+          "[fast]") {
+  const Position pos1{0, 1};
+  const Position pos2{1, 0};
+  REQUIRE_FALSE(pos1 == pos2);
+}

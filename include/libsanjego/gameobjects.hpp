@@ -55,6 +55,8 @@ class Tower {
 struct Position {
   RowNr row;
   ColumnNr column;
+
+  bool operator==(const Position &other) const noexcept;
 };
 
 namespace details {
