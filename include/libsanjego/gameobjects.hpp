@@ -103,6 +103,25 @@ class Board {
   }
 
   /*
+   * Makes the move on this board. It does not check whether the move is
+   * actually legal (apart from bound checks).
+   * Returns whether the move was carried out successfully.
+   */
+  bool Make(Move &move) noexcept {
+    if (details::exceeds_border<HEIGHT, WIDTH>(move.source) ||
+        details::exceeds_border<HEIGHT, WIDTH>(move.target) ||
+        move.source == move.target) {
+      return false;
+    }
+    auto &sourceTower =
+        this->field[details::to_array_index(move.source, Width())];
+    auto &targetTower =
+        this->field[details::to_array_index(move.target, Width())];
+    targetTower.Attach(sourceTower);
+    return true;
+  }
+
+  /*
    * Returns a copy of the tower at the given position for read-only tasks if
    * the board has a tower at the specified position.
    */

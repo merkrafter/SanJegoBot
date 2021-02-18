@@ -99,3 +99,66 @@ TEST_CASE("Positions are not equal if their coordinates are swapped",
   const Position pos2{1, 0};
   REQUIRE_FALSE(pos1 == pos2);
 }
+
+TEST_CASE("Moving towers adds the heights of source and target", "[fast]") {
+  Board<2, 2> board;  // initializes board with height 1 towers
+  const Position source{0, 0};
+  const Position target{0, 1};
+  Move move{source, target};
+  board.Make(move);
+  const std::optional<Tower> resulting_tower = board.GetTowerAt(target);
+  REQUIRE(resulting_tower.value().Height() == 2);
+}
+
+TEST_CASE("Moved towers keep their top brick's color", "[fast]") {
+  Board<2, 2> board;  // initializes board with blue tower at (0,0)
+  const Position source{0, 0};
+  const Position target{0, 1};
+  const auto sourceTowerColor = board.GetTowerAt(source).value().Top();
+
+  Move move{source, target};
+  board.Make(move);
+  const std::optional<Tower> resulting_tower = board.GetTowerAt(target);
+  REQUIRE(resulting_tower.value().Top() == sourceTowerColor);
+}
+
+TEST_CASE("'Moving' towers from and to the same position fails", "[fast]") {
+  Board<2, 2> board;  // initializes board with blue tower at (0,0)
+  const Position source{0, 0};
+  const Position target{0, 0};
+  Move move{source, target};
+  const auto success = board.Make(move);
+  REQUIRE_FALSE(success);
+}
+
+TEST_CASE("Moving towers outside the boundaries fails", "[fast]") {
+  Board<2, 2> board;
+  SECTION("source with wrong row") {
+    const Position source{-1, 0};
+    const Position target{0, 1};
+    Move move{source, target};
+    const auto success = board.Make(move);
+    REQUIRE_FALSE(success);
+  }
+  SECTION("source with wrong column") {
+    const Position source{0, 3};
+    const Position target{0, 1};
+    Move move{source, target};
+    const auto success = board.Make(move);
+    REQUIRE_FALSE(success);
+  }
+  SECTION("target with wrong row") {
+    const Position source{0, 1};
+    const Position target{4, 0};
+    Move move{source, target};
+    const auto success = board.Make(move);
+    REQUIRE_FALSE(success);
+  }
+  SECTION("target with wrong column") {
+    const Position source{0, 1};
+    const Position target{0, -3};
+    Move move{source, target};
+    const auto success = board.Make(move);
+    REQUIRE_FALSE(success);
+  }
+}
