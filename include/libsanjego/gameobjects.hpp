@@ -27,6 +27,10 @@
 namespace libsanjego {
 enum struct Color : uint8_t { Blue = 0, Yellow = 1 };
 
+// Forward declaration for use in Tower class.
+template <board_size_t HEIGHT, board_size_t WIDTH>
+class Board;
+
 /*
  * This Tower implementation does not preserve the actual structure,
  * that is the order of bricks it consists of. It only stores its height and
@@ -41,13 +45,32 @@ class Tower {
   [[nodiscard]] Color Top() const noexcept;
   [[nodiscard]] tower_size_t Height() const noexcept;
 
+  /*
+   * Adds the given tower on top of *this* one. As a result, their heights are
+   * added and the top brick is now the same as tower's.
+   */
+  void Attach(const Tower tower);
+
+  template <board_size_t HEIGHT, board_size_t WIDTH>
+  friend class Board;
+
  private:
   tower_size_t representation;
+  /*
+   * Marks this tower instance as empty. This is a safe alternative to nullptr.
+   */
+  void Clear() noexcept;
+  /*
+   * Returns whether this tower is actually a null value.
+   */
+  [[nodiscard]] bool IsEmpty() const noexcept;
 };
 
 struct Position {
   RowNr row;
   ColumnNr column;
+
+  bool operator==(const Position &other) const noexcept;
 };
 
 namespace details {
@@ -71,6 +94,16 @@ bool exceeds_border(const Position &position) {
 }
 }  // namespace details
 
+/*
+ * A move a player wants to make in a game.
+ * This does not mean a move object is necessarily legal; it depends on the
+ * ruleset used.
+ */
+struct Move {
+  const Position source;
+  const Position target;
+};
+
 template <board_size_t HEIGHT, board_size_t WIDTH>
 class Board {
  public:
@@ -84,6 +117,26 @@ class Board {
   }
 
   /*
+   * Makes the move on this board. It does not check whether the move is
+   * actually legal (apart from bound checks).
+   * Returns whether the move was carried out successfully.
+   */
+  bool Make(Move &move) noexcept {
+    if (details::exceeds_border<HEIGHT, WIDTH>(move.source) ||
+        details::exceeds_border<HEIGHT, WIDTH>(move.target) ||
+        move.source == move.target) {
+      return false;
+    }
+    auto &sourceTower =
+        this->field[details::to_array_index(move.source, Width())];
+    auto &targetTower =
+        this->field[details::to_array_index(move.target, Width())];
+    targetTower.Attach(sourceTower);
+    sourceTower.Clear();
+    return true;
+  }
+
+  /*
    * Returns a copy of the tower at the given position for read-only tasks if
    * the board has a tower at the specified position.
    */
@@ -92,7 +145,11 @@ class Board {
     if (details::exceeds_border<HEIGHT, WIDTH>(position)) {
       return {};
     }
-    return this->field[details::to_array_index(position, Width())];
+    const auto tower = this->field[details::to_array_index(position, Width())];
+    if (tower.IsEmpty()) {
+      return {};
+    }
+    return tower;
   }
 
   [[nodiscard]] constexpr RowNr Height() const noexcept { return HEIGHT; }

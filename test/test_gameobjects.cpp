@@ -64,3 +64,113 @@ TEST_CASE("Tower at (1,1) of newly created board is first player's", "[fast]") {
   const std::optional<Tower> tower = board.GetTowerAt({1, 1});
   REQUIRE(tower.value().Top() == Color::Blue);
 }
+
+TEST_CASE("Attaching towers adds their heights", "[fast]") {
+  Tower source(Color::Blue);
+  Tower target(Color::Yellow);
+  target.Attach(source);
+  REQUIRE(target.Height() == 2);
+}
+
+TEST_CASE("Attached towers keep their top brick", "[fast]") {
+  SECTION("Yellow on top") {
+    Tower source(Color::Yellow);
+    Tower target(Color::Blue);
+    target.Attach(source);
+    REQUIRE(target.Top() == source.Top());
+  }
+  SECTION("Blue on top") {
+    Tower source(Color::Blue);
+    Tower target(Color::Yellow);
+    target.Attach(source);
+    REQUIRE(target.Top() == source.Top());
+  }
+}
+
+TEST_CASE("Positions are equal if both coordinates are equal", "[fast]") {
+  const Position pos1{0, 1};
+  const Position pos2{0, 1};
+  REQUIRE(pos1 == pos2);
+}
+
+TEST_CASE("Positions are not equal if their coordinates are swapped",
+          "[fast]") {
+  const Position pos1{0, 1};
+  const Position pos2{1, 0};
+  REQUIRE_FALSE(pos1 == pos2);
+}
+
+TEST_CASE("Moving towers adds the heights of source and target", "[fast]") {
+  Board<2, 2> board;  // initializes board with height 1 towers
+  const Position source{0, 0};
+  const Position target{0, 1};
+  Move move{source, target};
+  board.Make(move);
+  const std::optional<Tower> resulting_tower = board.GetTowerAt(target);
+  REQUIRE(resulting_tower.value().Height() == 2);
+}
+
+TEST_CASE("Moved towers keep their top brick's color", "[fast]") {
+  Board<2, 2> board;  // initializes board with blue tower at (0,0)
+  const Position source{0, 0};
+  const Position target{0, 1};
+  const auto sourceTowerColor = board.GetTowerAt(source).value().Top();
+
+  Move move{source, target};
+  board.Make(move);
+  const std::optional<Tower> resulting_tower = board.GetTowerAt(target);
+  REQUIRE(resulting_tower.value().Top() == sourceTowerColor);
+}
+
+TEST_CASE("'Moving' towers from and to the same position fails", "[fast]") {
+  Board<2, 2> board;  // initializes board with blue tower at (0,0)
+  const Position source{0, 0};
+  const Position target{0, 0};
+  Move move{source, target};
+  const auto success = board.Make(move);
+  REQUIRE_FALSE(success);
+}
+
+TEST_CASE("Moving towers outside the boundaries fails", "[fast]") {
+  Board<2, 2> board;
+  SECTION("source with wrong row") {
+    const Position source{-1, 0};
+    const Position target{0, 1};
+    Move move{source, target};
+    const auto success = board.Make(move);
+    REQUIRE_FALSE(success);
+  }
+  SECTION("source with wrong column") {
+    const Position source{0, 3};
+    const Position target{0, 1};
+    Move move{source, target};
+    const auto success = board.Make(move);
+    REQUIRE_FALSE(success);
+  }
+  SECTION("target with wrong row") {
+    const Position source{0, 1};
+    const Position target{4, 0};
+    Move move{source, target};
+    const auto success = board.Make(move);
+    REQUIRE_FALSE(success);
+  }
+  SECTION("target with wrong column") {
+    const Position source{0, 1};
+    const Position target{0, -3};
+    Move move{source, target};
+    const auto success = board.Make(move);
+    REQUIRE_FALSE(success);
+  }
+}
+
+TEST_CASE("After being moved, the source tower's position is empty", "[fast]") {
+  Board<2, 2> board;
+  const Position source{0, 0};
+  const Position target{0, 1};
+
+  Move move{source, target};
+  board.Make(move);
+
+  const std::optional<Tower> sourceField = board.GetTowerAt(source);
+  REQUIRE_FALSE(sourceField.has_value());
+}
