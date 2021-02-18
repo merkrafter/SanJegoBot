@@ -162,3 +162,15 @@ TEST_CASE("Moving towers outside the boundaries fails", "[fast]") {
     REQUIRE_FALSE(success);
   }
 }
+
+TEST_CASE("After being moved, the source tower's position is empty", "[fast]") {
+  Board<2, 2> board;
+  const Position source{0, 0};
+  const Position target{0, 1};
+
+  Move move{source, target};
+  board.Make(move);
+
+  const std::optional<Tower> sourceField = board.GetTowerAt(source);
+  REQUIRE_FALSE(sourceField.has_value());
+}

@@ -27,6 +27,10 @@
 namespace libsanjego {
 enum struct Color : uint8_t { Blue = 0, Yellow = 1 };
 
+// Forward declaration for use in Tower class.
+template <board_size_t HEIGHT, board_size_t WIDTH>
+class Board;
+
 /*
  * This Tower implementation does not preserve the actual structure,
  * that is the order of bricks it consists of. It only stores its height and
@@ -47,8 +51,18 @@ class Tower {
    */
   void Attach(const Tower tower);
 
+  template <board_size_t HEIGHT, board_size_t WIDTH>
+  friend class Board;
+
  private:
   tower_size_t representation;
+  /*
+   * Marks this tower instance as empty. This is a safe alternative to nullptr.
+   */
+  void Clear() noexcept;
+  /*
+   * Returns whether this tower is actually a null value.
+   */
   [[nodiscard]] bool IsEmpty() const noexcept;
 };
 
@@ -118,6 +132,7 @@ class Board {
     auto &targetTower =
         this->field[details::to_array_index(move.target, Width())];
     targetTower.Attach(sourceTower);
+    sourceTower.Clear();
     return true;
   }
 
@@ -130,7 +145,11 @@ class Board {
     if (details::exceeds_border<HEIGHT, WIDTH>(position)) {
       return {};
     }
-    return this->field[details::to_array_index(position, Width())];
+    const auto tower = this->field[details::to_array_index(position, Width())];
+    if (tower.IsEmpty()) {
+      return {};
+    }
+    return tower;
   }
 
   [[nodiscard]] constexpr RowNr Height() const noexcept { return HEIGHT; }

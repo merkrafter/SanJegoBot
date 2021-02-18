@@ -39,6 +39,8 @@ tower_size_t Tower::Height() const noexcept {
   return without_owner(this->representation);
 }
 
+void Tower::Clear() noexcept { this->representation = 0; }
+
 bool Tower::IsEmpty() const noexcept { return this->representation == 0; }
 
 void Tower::Attach(const Tower tower) {
