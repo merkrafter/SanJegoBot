@@ -48,6 +48,17 @@ TEST_CASE("Moving a tower is illegal if a player does not own it", "[fast]") {
     REQUIRE_FALSE(MoveIsAllowedOn<2, 2>(board, move, Color::Yellow));
   }
 }
+
+TEST_CASE("Moving a tower is illegal if source and target are equal",
+          "[fast]") {
+  const Board<3, 4> board;  // arbitrary size
+
+  const Position source{0, 0};
+  const Position target{0, 0};
+  const Move move{source, target};
+  REQUIRE_FALSE(MoveIsAllowedOn(board, move, Color::Blue));
+}
+
 // 3. move not allowed if no target tower
 // 4. move not allowed if no source tower
 

@@ -36,13 +36,17 @@ bool owns_tower(Color, Tower);
 
 /*
  * In this ruleset, a move is allowed if all these conditions hold:
- * - both the source and target position are on the board
+ * - both the source and target are distinct positions on the board
  * - both contain towers
  * - the source tower is owned by the active player
  */
 template <board_size_t HEIGHT, board_size_t WIDTH>
 bool MoveIsAllowedOn(const Board<HEIGHT, WIDTH> &board, const Move &move,
                      const Color active_player) noexcept {
+  if (move.source == move.target) {
+    return false;
+  }
+
   const std::optional<Tower> sourceTower = board.GetTowerAt(move.source);
   if (!sourceTower.has_value()) {
     return false;
