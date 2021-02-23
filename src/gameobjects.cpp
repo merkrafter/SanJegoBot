@@ -52,6 +52,10 @@ void Tower::Attach(const Tower tower) {
   this->representation = pack(new_height, new_owner);
 }
 
+bool Move::operator==(const Move &other) const noexcept {
+  return this->source == other.source && this->target == other.target;
+}
+
 bool Position::operator==(const Position &other) const noexcept {
   return this->row == other.row && this->column == other.column;
 }

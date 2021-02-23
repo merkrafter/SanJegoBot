@@ -102,6 +102,8 @@ bool exceeds_border(const Position &position) {
 struct Move {
   const Position source;
   const Position target;
+
+  bool operator==(const Move &other) const noexcept;
 };
 
 template <board_size_t HEIGHT, board_size_t WIDTH>
