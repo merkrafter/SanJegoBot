@@ -30,6 +30,10 @@ target_include_directories(
   sanjego PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                  $<INSTALL_INTERFACE:include>)
 
+add_library(sanjego_bot STATIC)
+target_sources(sanjego_bot PRIVATE include/libsanjego/bot.hpp)
+target_link_libraries(sanjego_bot PRIVATE sanjego)
+
 find_package(Catch2)
 if(NOT Catch2_FOUND)
   include(FetchContent)
