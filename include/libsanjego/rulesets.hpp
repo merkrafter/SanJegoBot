@@ -20,6 +20,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <vector>
 
 #include "gameobjects.hpp"
 
@@ -51,6 +52,10 @@ class Ruleset {
    * for the first player while negative values are better for the second.
    */
   virtual int8_t ComputeValueOf(const Board<HEIGHT, WIDTH> &board) noexcept = 0;
+
+  virtual std::vector<Move> GetLegalMoves(
+      const Board<HEIGHT, WIDTH> &board,
+      const Color active_player) noexcept = 0;
 };
 
 template <board_size_t HEIGHT, board_size_t WIDTH>
@@ -73,6 +78,9 @@ class StandardRuleset : Ruleset<HEIGHT, WIDTH> {
    * tower of each player.
    */
   int8_t ComputeValueOf(const Board<HEIGHT, WIDTH> &board) noexcept;
+
+  std::vector<Move> GetLegalMoves(const Board<HEIGHT, WIDTH> &board,
+                                  const Color active_player) noexcept;
 };
 
 /*
@@ -103,6 +111,14 @@ bool StandardRuleset<HEIGHT, WIDTH>::MoveIsAllowedOn(
   return true;
 }
 
+template <board_size_t HEIGHT, board_size_t WIDTH>
+std::vector<Move> StandardRuleset<HEIGHT, WIDTH>::GetLegalMoves(
+    const Board<HEIGHT, WIDTH> &board, const Color active_player) noexcept {
+  std::vector<Move> legal_moves;
+
+  return legal_moves;
+}
+
 /*
  * Returns the game-theoretical value of the given game field from the first
  * player's point of view, that is positive values indicate a better position
@@ -113,6 +129,7 @@ int8_t StandardRuleset<HEIGHT, WIDTH>::ComputeValueOf(
     const Board<HEIGHT, WIDTH> &board) noexcept {
   return board.Height() * board.Width() == 1;
 }
+
 template <board_size_t HEIGHT, board_size_t WIDTH>
 std::unique_ptr<StandardRuleset<HEIGHT, WIDTH>> CreateStandardRulesetFor(
     const Board<HEIGHT, WIDTH> &board) noexcept {

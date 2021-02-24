@@ -80,3 +80,21 @@ TEST_CASE("Newly created Board should have value 0", "[fast]") {
   auto rs = CreateStandardRulesetFor(board);
   REQUIRE(rs->ComputeValueOf(board) == 0);
 }
+
+TEST_CASE("GetLegalMoves should return empty vector in an end state",
+          "[fast]") {
+  const Board<1, 1> board;
+  auto rs = CreateStandardRulesetFor(board);
+
+  SECTION("First player") {
+    const auto legalMoves = rs->GetLegalMoves(board, Color::Blue);
+
+    REQUIRE(legalMoves.empty());
+  }
+
+  SECTION("Second player") {
+    const auto legalMoves = rs->GetLegalMoves(board, Color::Yellow);
+
+    REQUIRE(legalMoves.empty());
+  }
+}
