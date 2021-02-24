@@ -70,4 +70,21 @@ template <board_size_t HEIGHT, board_size_t WIDTH>
 int8_t ComputeValueOf(const Board<HEIGHT, WIDTH> &board) noexcept {
   return board.Height() * board.Width() == 1;
 }
+
+/*
+ * A ruleset brings life into game objects and defines how they are allowed to
+ * interact with each other.
+ */
+template <board_size_t HEIGHT, board_size_t WIDTH>
+class Ruleset {
+  virtual bool MoveIsAllowedOn(const Board<HEIGHT, WIDTH> &board,
+                               const Move &move,
+                               const Color active_player) noexcept = 0;
+  /*
+   * Returns the game-theoretical value of the given game field from the first
+   * player's point of view, that is positive values indicate a better position
+   * for the first player while negative values are better for the second.
+   */
+  virtual int8_t ComputeValueOf(const Board<HEIGHT, WIDTH> &board) noexcept = 0;
+};
 }  // namespace libsanjego
