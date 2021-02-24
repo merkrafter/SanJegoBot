@@ -19,6 +19,7 @@
 #pragma once
 
 #include <cstdint>
+#include <iterator>
 #include <memory>
 #include <vector>
 
@@ -111,10 +112,29 @@ bool StandardRuleset<HEIGHT, WIDTH>::MoveIsAllowedOn(
   return true;
 }
 
+namespace details {
+template <board_size_t HEIGHT, board_size_t WIDTH>
+// TODO find better name for this function returning moves
+std::vector<Move> getQuadNeighboursOn(const Board<HEIGHT, WIDTH> &board,
+                                      const Position pos) noexcept {
+  std::vector<Move> moves_to_neighbours;
+
+  return moves_to_neighbours;
+}
+}  // namespace details
 template <board_size_t HEIGHT, board_size_t WIDTH>
 std::vector<Move> StandardRuleset<HEIGHT, WIDTH>::GetLegalMoves(
     const Board<HEIGHT, WIDTH> &board, const Color active_player) noexcept {
   std::vector<Move> legal_moves;
+
+  // TODO iterate over all positions here; possibly define a iterator function
+  const Position pos{0, 0};
+  // if (owns_tower(active_player, board.TowerAt(pos)) {
+  auto moves_to_neighbours = details::getQuadNeighboursOn(board, pos);
+  legal_moves.insert(legal_moves.end(),
+                     std::make_move_iterator(moves_to_neighbours.begin()),
+                     std::make_move_iterator(moves_to_neighbours.end()));
+  //}
 
   return legal_moves;
 }
