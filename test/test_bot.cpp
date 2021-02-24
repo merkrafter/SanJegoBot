@@ -26,12 +26,25 @@
 using namespace libsanjego;
 
 TEST_CASE("Should return the only possible move") {
-  const Board<1, 2> board;
-  const Color active_player = Color::Blue;
-  const Move expected_move{{0, 0}, {0, 1}};
+  SECTION("As first player") {
+    const Board<1, 2> board;
+    const Color active_player = Color::Blue;
+    const Move expected_move{{0, 0}, {0, 1}};
 
-  FullExplorer<1, 2> explorer;
-  const auto computed_move = explorer.Explore(board, active_player).best_move;
+    FullExplorer<1, 2> explorer;
+    const auto computed_move = explorer.Explore(board, active_player).best_move;
 
-  REQUIRE(computed_move == expected_move);
+    REQUIRE(computed_move == expected_move);
+  }
+
+  SECTION("As second player") {
+    const Board<1, 2> board;
+    const Color active_player = Color::Yellow;
+    const Move expected_move{{0, 1}, {0, 0}};
+
+    FullExplorer<1, 2> explorer;
+    const auto computed_move = explorer.Explore(board, active_player).best_move;
+
+    REQUIRE(computed_move == expected_move);
+  }
 }

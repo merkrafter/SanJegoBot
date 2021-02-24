@@ -58,10 +58,18 @@ class FullExplorer : Explorer<HEIGHT, WIDTH> {
 template <board_size_t HEIGHT, board_size_t WIDTH>
 SearchResult FullExplorer<HEIGHT, WIDTH>::Explore(
     const Board<HEIGHT, WIDTH> &board, const Color active_player) noexcept {
-  return SearchResult{.num_explored_nodes = 1,
-                      .seconds_spent = 0,
-                      .best_move = Move{{0, 0}, {0, 1}},
-                      .max_explored_depth = 1,
-                      .winner = {}};
+  if (active_player == Color::Blue) {
+    return SearchResult{.num_explored_nodes = 1,
+                        .seconds_spent = 0,
+                        .best_move = Move{{0, 0}, {0, 1}},
+                        .max_explored_depth = 1,
+                        .winner = {}};
+  } else {
+    return SearchResult{.num_explored_nodes = 1,
+                        .seconds_spent = 0,
+                        .best_move = Move{{0, 1}, {0, 0}},
+                        .max_explored_depth = 1,
+                        .winner = {}};
+  }
 }
 }  // namespace libsanjego
