@@ -100,6 +100,23 @@ TEST_CASE("Positions are not equal if their coordinates are swapped",
   REQUIRE_FALSE(pos1 == pos2);
 }
 
+TEST_CASE("Skipping is a valid move", "[fast]") {
+  const auto move = Move::Skip();
+  REQUIRE(move.IsSkip());
+}
+
+TEST_CASE("Normal moves don't signal skipping", "[fast]") {
+  std::vector<Move> moves{
+      Move{0, 0, 0, 1},
+      Move{1, 0, 0, 0},
+      Move{1, 1, 1, 2},
+      Move{2, 3, 3, 4},
+  };
+  for (auto &move : moves) {
+    REQUIRE_FALSE(move.IsSkip());
+  }
+}
+
 TEST_CASE("Moves are equal if source and target positions are equal",
           "[fast]") {
   const Move move1{{0, 1}, {1, 0}};
