@@ -100,10 +100,11 @@ bool exceeds_border(const Position &position) {
  * ruleset used.
  */
 struct Move {
-  const Position source;
-  const Position target;
+  Position source;
+  Position target;
 
   bool operator==(const Move &other) const noexcept;
+  Move &operator=(const Move &other) = default;
   [[nodiscard]] bool IsSkip() const noexcept;
 
   /*
