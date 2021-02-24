@@ -48,3 +48,20 @@ TEST_CASE("Should return the only possible move") {
     REQUIRE(computed_move == expected_move);
   }
 }
+
+TEST_CASE("Should return skip when there is no legal move left", "[test]") {
+  const Board<1, 1> board;
+  FullExplorer<1, 1> explorer;
+  SECTION("As first player") {
+    const Color active_player = Color::Blue;
+    const auto computed_move = explorer.Explore(board, active_player).best_move;
+
+    REQUIRE(computed_move.IsSkip());
+  }
+  SECTION("As second player") {
+    const Color active_player = Color::Yellow;
+    const auto computed_move = explorer.Explore(board, active_player).best_move;
+
+    REQUIRE(computed_move.IsSkip());
+  }
+}

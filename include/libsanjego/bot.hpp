@@ -20,9 +20,11 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 #include <optional>
 
 #include "libsanjego/gameobjects.hpp"
+#include "libsanjego/rulesets.hpp"
 #include "libsanjego/types.hpp"
 
 namespace libsanjego {
@@ -42,11 +44,23 @@ struct SearchResult {
   std::optional<Color> winner;
 };
 
+/*
+ * An explorer expands nodes of a game tree to find notable states.
+ */
 template <board_size_t HEIGHT, board_size_t WIDTH>
 class Explorer {
  public:
+  /*
+   * Creates an explorer backed by the standard rule set.
+   */
+  explicit Explorer()
+      : rules(std::make_unique<StandardRuleset<HEIGHT, WIDTH>>()) {}
   virtual SearchResult Explore(const Board<HEIGHT, WIDTH> &board,
                                Color active_player) noexcept = 0;
+
+ protected:
+  // TODO allow general rule sets
+  std::unique_ptr<StandardRuleset<HEIGHT, WIDTH>> rules;
 };
 
 template <board_size_t HEIGHT, board_size_t WIDTH>
@@ -55,21 +69,30 @@ class FullExplorer : Explorer<HEIGHT, WIDTH> {
   SearchResult Explore(const Board<HEIGHT, WIDTH> &board,
                        Color active_player) noexcept;
 };
+
 template <board_size_t HEIGHT, board_size_t WIDTH>
 SearchResult FullExplorer<HEIGHT, WIDTH>::Explore(
     const Board<HEIGHT, WIDTH> &board, const Color active_player) noexcept {
   if (active_player == Color::Blue) {
-    return SearchResult{.num_explored_nodes = 1,
-                        .seconds_spent = 0,
-                        .best_move = Move{{0, 0}, {0, 1}},
-                        .max_explored_depth = 1,
-                        .winner = {}};
+    auto result = SearchResult{.num_explored_nodes = 1,
+                               .seconds_spent = 0,
+                               .best_move = Move{{0, 0}, {0, 1}},
+                               .max_explored_depth = 1,
+                               .winner = {}};
+    if (!this->rules->MoveIsAllowedOn(board, result.best_move, active_player)) {
+      result.best_move = Move::Skip();
+    }
+    return result;
   } else {
-    return SearchResult{.num_explored_nodes = 1,
-                        .seconds_spent = 0,
-                        .best_move = Move{{0, 1}, {0, 0}},
-                        .max_explored_depth = 1,
-                        .winner = {}};
+    auto result = SearchResult{.num_explored_nodes = 1,
+                               .seconds_spent = 0,
+                               .best_move = Move{{0, 1}, {0, 0}},
+                               .max_explored_depth = 1,
+                               .winner = {}};
+    if (!this->rules->MoveIsAllowedOn(board, result.best_move, active_player)) {
+      result.best_move = Move::Skip();
+    }
+    return result;
   }
 }
 }  // namespace libsanjego
