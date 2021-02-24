@@ -19,6 +19,7 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 
 #include "gameobjects.hpp"
 
@@ -35,14 +36,55 @@ bool owns_tower(Color, Tower);
 }  // namespace details
 
 /*
+ * A ruleset brings life into game objects and defines how they are allowed to
+ * interact with each other.
+ */
+template <board_size_t HEIGHT, board_size_t WIDTH>
+class Ruleset {
+ public:
+  virtual bool MoveIsAllowedOn(const Board<HEIGHT, WIDTH> &board,
+                               const Move &move,
+                               const Color active_player) noexcept = 0;
+  /*
+   * Returns the game-theoretical value of the given game field from the first
+   * player's point of view, that is positive values indicate a better position
+   * for the first player while negative values are better for the second.
+   */
+  virtual int8_t ComputeValueOf(const Board<HEIGHT, WIDTH> &board) noexcept = 0;
+};
+
+template <board_size_t HEIGHT, board_size_t WIDTH>
+class StandardRuleset : Ruleset<HEIGHT, WIDTH> {
+ public:
+  /*
+   * In this ruleset, a move is allowed if all these conditions hold:
+   * - both the source and target are distinct positions on the board
+   * - both contain towers
+   * - the source tower is owned by the active player
+   */
+  bool MoveIsAllowedOn(const Board<HEIGHT, WIDTH> &board, const Move &move,
+                       const Color active_player) noexcept;
+  /*
+   * Returns the game-theoretical value of the given game field from the first
+   * player's point of view, that is positive values indicate a better position
+   * for the first player while negative values are better for the second.
+   *
+   * In this ruleset, the value is the difference in height of the highest
+   * tower of each player.
+   */
+  int8_t ComputeValueOf(const Board<HEIGHT, WIDTH> &board) noexcept;
+};
+
+/*
  * In this ruleset, a move is allowed if all these conditions hold:
  * - both the source and target are distinct positions on the board
  * - both contain towers
  * - the source tower is owned by the active player
  */
 template <board_size_t HEIGHT, board_size_t WIDTH>
-bool MoveIsAllowedOn(const Board<HEIGHT, WIDTH> &board, const Move &move,
-                     const Color active_player) noexcept {
+bool StandardRuleset<HEIGHT, WIDTH>::MoveIsAllowedOn(
+    const Board<HEIGHT, WIDTH> &board, const Move &move,
+    const Color active_player) noexcept {
   if (move.source == move.target) {
     return false;
   }
@@ -67,24 +109,14 @@ bool MoveIsAllowedOn(const Board<HEIGHT, WIDTH> &board, const Move &move,
  * for the first player while negative values are better for the second.
  */
 template <board_size_t HEIGHT, board_size_t WIDTH>
-int8_t ComputeValueOf(const Board<HEIGHT, WIDTH> &board) noexcept {
+int8_t StandardRuleset<HEIGHT, WIDTH>::ComputeValueOf(
+    const Board<HEIGHT, WIDTH> &board) noexcept {
   return board.Height() * board.Width() == 1;
 }
-
-/*
- * A ruleset brings life into game objects and defines how they are allowed to
- * interact with each other.
- */
 template <board_size_t HEIGHT, board_size_t WIDTH>
-class Ruleset {
-  virtual bool MoveIsAllowedOn(const Board<HEIGHT, WIDTH> &board,
-                               const Move &move,
-                               const Color active_player) noexcept = 0;
-  /*
-   * Returns the game-theoretical value of the given game field from the first
-   * player's point of view, that is positive values indicate a better position
-   * for the first player while negative values are better for the second.
-   */
-  virtual int8_t ComputeValueOf(const Board<HEIGHT, WIDTH> &board) noexcept = 0;
-};
+std::unique_ptr<StandardRuleset<HEIGHT, WIDTH>> CreateStandardRulesetFor(
+    const Board<HEIGHT, WIDTH> &board) noexcept {
+  return std::make_unique<StandardRuleset<HEIGHT, WIDTH>>();
+}
+
 }  // namespace libsanjego
