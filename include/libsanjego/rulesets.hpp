@@ -18,6 +18,7 @@
  */
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include <iterator>
 #include <memory>
@@ -114,10 +115,14 @@ bool StandardRuleset<HEIGHT, WIDTH>::MoveIsAllowedOn(
 
 namespace details {
 template <board_size_t HEIGHT, board_size_t WIDTH>
-// TODO find better name for this function returning moves
-std::vector<Move> getQuadNeighboursOn(const Board<HEIGHT, WIDTH> &board,
-                                      const Position pos) noexcept {
-  std::vector<Move> moves_to_neighbours;
+auto getMovesToQuadNeighboursOn(const Board<HEIGHT, WIDTH> &board,
+                                const Position pos) noexcept {
+  std::array<Move, 4> moves_to_neighbours{
+      Move{pos, Position{pos.row + 1, pos.column}},
+      Move{pos, Position{pos.row - 1, pos.column}},
+      Move{pos, Position{pos.row, pos.column + 1}},
+      Move{pos, Position{pos.row, pos.column - 1}},
+  };
 
   return moves_to_neighbours;
 }
@@ -130,10 +135,12 @@ std::vector<Move> StandardRuleset<HEIGHT, WIDTH>::GetLegalMoves(
   // TODO iterate over all positions here; possibly define a iterator function
   const Position pos{0, 0};
   // if (owns_tower(active_player, board.TowerAt(pos)) {
-  auto moves_to_neighbours = details::getQuadNeighboursOn(board, pos);
-  legal_moves.insert(legal_moves.end(),
-                     std::make_move_iterator(moves_to_neighbours.begin()),
-                     std::make_move_iterator(moves_to_neighbours.end()));
+  auto moves_to_neighbours = details::getMovesToQuadNeighboursOn(board, pos);
+  for (auto &move : moves_to_neighbours) {
+    if (MoveIsAllowedOn(board, move, active_player)) {
+      legal_moves.push_back(move);
+    }
+  }
   //}
 
   return legal_moves;
