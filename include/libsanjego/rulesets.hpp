@@ -118,10 +118,10 @@ template <board_size_t HEIGHT, board_size_t WIDTH>
 auto getMovesToQuadNeighboursOn(const Board<HEIGHT, WIDTH> &board,
                                 const Position pos) noexcept {
   std::array<Move, 4> moves_to_neighbours{
-      Move{pos, Position{pos.row + 1, pos.column}},
-      Move{pos, Position{pos.row - 1, pos.column}},
-      Move{pos, Position{pos.row, pos.column + 1}},
-      Move{pos, Position{pos.row, pos.column - 1}},
+      Move{pos, Position{RowNr(pos.row + 1), pos.column}},
+      Move{pos, Position{RowNr(pos.row - 1), pos.column}},
+      Move{pos, Position{pos.row, ColumnNr(pos.column + 1)}},
+      Move{pos, Position{pos.row, ColumnNr(pos.column - 1)}},
   };
 
   return moves_to_neighbours;
