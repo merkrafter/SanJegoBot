@@ -98,3 +98,21 @@ TEST_CASE("GetLegalMoves should return empty vector in an end state",
     REQUIRE(legalMoves.empty());
   }
 }
+
+TEST_CASE("On a 2x2 board, each player has 4 possible opening moves",
+          "[fast]") {
+  const Board<2, 2> board;
+  auto rs = CreateStandardRulesetFor(board);
+
+  SECTION("First player") {
+    const auto legalMoves = rs->GetLegalMoves(board, Color::Blue);
+
+    REQUIRE(legalMoves.size() == 4);
+  }
+
+  SECTION("Second player") {
+    const auto legalMoves = rs->GetLegalMoves(board, Color::Yellow);
+
+    REQUIRE(legalMoves.size() == 4);
+  }
+}

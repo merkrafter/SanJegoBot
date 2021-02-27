@@ -132,16 +132,18 @@ std::vector<Move> StandardRuleset<HEIGHT, WIDTH>::GetLegalMoves(
     const Board<HEIGHT, WIDTH> &board, const Color active_player) noexcept {
   std::vector<Move> legal_moves;
 
-  // TODO iterate over all positions here; possibly define a iterator function
-  const Position pos{0, 0};
-  // if (owns_tower(active_player, board.TowerAt(pos)) {
-  auto moves_to_neighbours = details::getMovesToQuadNeighboursOn(board, pos);
-  for (auto &move : moves_to_neighbours) {
-    if (MoveIsAllowedOn(board, move, active_player)) {
-      legal_moves.push_back(move);
+  for (board_size_t row = 0; row < HEIGHT; ++row) {
+    for (board_size_t col = 0; col < WIDTH; ++col) {
+      const Position pos{row, col};
+      auto moves_to_neighbours =
+          details::getMovesToQuadNeighboursOn(board, pos);
+      for (auto &move : moves_to_neighbours) {
+        if (MoveIsAllowedOn(board, move, active_player)) {
+          legal_moves.push_back(move);
+        }
+      }
     }
   }
-  //}
 
   return legal_moves;
 }
