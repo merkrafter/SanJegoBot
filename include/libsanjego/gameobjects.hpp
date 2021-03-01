@@ -98,10 +98,13 @@ bool exceeds_border(const Position &position) {
  * A move a player wants to make in a game.
  * This does not mean a move object is necessarily legal; it depends on the
  * ruleset used.
+ * If a move is applied to a board, the target tower may be stored in this
+ * struct's affected_tower field to simplify reverting moves.
  */
 struct Move {
   Position source;
   Position target;
+  std::optional<Tower> affected_tower;
 
   bool operator==(const Move &other) const noexcept;
   Move &operator=(const Move &other) = default;
@@ -140,6 +143,7 @@ class Board {
         this->field[details::to_array_index(move.source, Width())];
     auto &targetTower =
         this->field[details::to_array_index(move.target, Width())];
+    move.affected_tower = targetTower;
     targetTower.Attach(sourceTower);
     sourceTower.Clear();
     return true;
