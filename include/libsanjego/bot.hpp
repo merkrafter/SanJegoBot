@@ -84,10 +84,11 @@ SearchResult FullExplorer<HEIGHT, WIDTH>::Explore(
   auto best_move = Move::Skip();
   if (!possible_moves.empty()) {
     auto max_rating = std::numeric_limits<game_value_t>::min();
+    auto tmp_board(board);
     for (auto &move : possible_moves) {
-      auto tmp_board(board);
       tmp_board.Make(move);
       const auto rating = this->rules->ComputeValueOf(tmp_board);
+      tmp_board.Undo(move);
       if (rating > max_rating) {
         max_rating = rating;
         best_move = move;
