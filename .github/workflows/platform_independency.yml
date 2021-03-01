@@ -5,10 +5,9 @@ name: Platform independency
 # In these environments, a "normal" build and unit test job is executed.
 
 on:
-  schedule:
-    # This workflow is costly, hence it is only executed nightly on three days a week.
-    # Those should be sufficient as there is no development progress every day.
-    - cron: '0 0 * * 1,3,5'
+  push: 
+    branches: 
+      - development
 
 env:
   BUILD_TYPE: Release
