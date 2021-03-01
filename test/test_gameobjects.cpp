@@ -100,6 +100,56 @@ TEST_CASE("Positions are not equal if their coordinates are swapped",
   REQUIRE_FALSE(pos1 == pos2);
 }
 
+TEST_CASE("Skipping is a valid move", "[fast]") {
+  const auto move = Move::Skip();
+  REQUIRE(move.IsSkip());
+}
+
+TEST_CASE("Normal moves don't signal skipping", "[fast]") {
+  std::vector<Move> moves{
+      Move{0, 0, 0, 1},
+      Move{1, 0, 0, 0},
+      Move{1, 1, 1, 2},
+      Move{2, 3, 3, 4},
+  };
+  for (auto &move : moves) {
+    REQUIRE_FALSE(move.IsSkip());
+  }
+}
+
+TEST_CASE("Moves are equal if source and target positions are equal",
+          "[fast]") {
+  const Move move1{{0, 1}, {1, 0}};
+  const Move move2{{0, 1}, {1, 0}};
+  REQUIRE(move1 == move2);
+}
+
+TEST_CASE("Moves are not equal if sources differ", "[fast]") {
+  SECTION("columns differ") {
+    const Move move1{{0, 1}, {1, 0}};
+    const Move move2{{0, 2}, {1, 0}};
+    REQUIRE_FALSE(move1 == move2);
+  }
+  SECTION("rows differ") {
+    const Move move1{{0, 1}, {1, 0}};
+    const Move move2{{1, 1}, {1, 0}};
+    REQUIRE_FALSE(move1 == move2);
+  }
+}
+
+TEST_CASE("Moves are not equal if targets differ", "[fast]") {
+  SECTION("columns differ") {
+    const Move move1{{0, 1}, {1, 0}};
+    const Move move2{{0, 1}, {1, 3}};
+    REQUIRE_FALSE(move1 == move2);
+  }
+  SECTION("rows differ") {
+    const Move move1{{0, 1}, {0, 0}};
+    const Move move2{{0, 1}, {1, 0}};
+    REQUIRE_FALSE(move1 == move2);
+  }
+}
+
 TEST_CASE("Moving towers adds the heights of source and target", "[fast]") {
   Board<2, 2> board;  // initializes board with height 1 towers
   const Position source{0, 0};

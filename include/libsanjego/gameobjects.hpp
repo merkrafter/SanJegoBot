@@ -100,8 +100,17 @@ bool exceeds_border(const Position &position) {
  * ruleset used.
  */
 struct Move {
-  const Position source;
-  const Position target;
+  Position source;
+  Position target;
+
+  bool operator==(const Move &other) const noexcept;
+  Move &operator=(const Move &other) = default;
+  [[nodiscard]] bool IsSkip() const noexcept;
+
+  /*
+   * Creates a move that signals that the player wants to skip the turn.
+   */
+  static Move Skip() noexcept;
 };
 
 template <board_size_t HEIGHT, board_size_t WIDTH>
