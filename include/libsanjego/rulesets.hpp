@@ -49,7 +49,7 @@ class Ruleset {
                                const Move &move,
                                const Color active_player) noexcept = 0;
   /*
-   * Returns the game-theoretical value of the given game field from the first
+   * Returns the game-theoretical value of the given game board from the first
    * player's point of view, that is positive values indicate a better position
    * for the first player while negative values are better for the second.
    */
@@ -72,7 +72,7 @@ class StandardRuleset : Ruleset<HEIGHT, WIDTH> {
   bool MoveIsAllowedOn(const Board<HEIGHT, WIDTH> &board, const Move &move,
                        const Color active_player) noexcept;
   /*
-   * Returns the game-theoretical value of the given game field from the first
+   * Returns the game-theoretical value of the given game board from the first
    * player's point of view, that is positive values indicate a better position
    * for the first player while negative values are better for the second.
    *
@@ -151,7 +151,7 @@ std::vector<Move> StandardRuleset<HEIGHT, WIDTH>::GetLegalMoves(
 typedef std::int8_t game_value_t;
 
 /*
- * Returns the game-theoretical value of the given game field from the first
+ * Returns the game-theoretical value of the given game board from the first
  * player's point of view, that is positive values indicate a better position
  * for the first player while negative values are better for the second.
  */

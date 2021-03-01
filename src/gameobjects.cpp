@@ -29,19 +29,19 @@ constexpr tower_size_t pack(const tower_size_t height, const Color color) {
   return height << OWNER_BIT | static_cast<uint8_t>(color);
 }
 
-Tower::Tower(const Color color) : representation(pack(1, color)) {}
+Tower::Tower(const Color color) : representation_(pack(1, color)) {}
 
 Color Tower::Top() const noexcept {
-  return static_cast<Color>(this->representation & OWNER_BIT);
+  return static_cast<Color>(this->representation_ & OWNER_BIT);
 }
 
 tower_size_t Tower::Height() const noexcept {
-  return without_owner(this->representation);
+  return without_owner(this->representation_);
 }
 
-void Tower::Clear() noexcept { this->representation = 0; }
+void Tower::Clear() noexcept { this->representation_ = 0; }
 
-bool Tower::IsEmpty() const noexcept { return this->representation == 0; }
+bool Tower::IsEmpty() const noexcept { return this->representation_ == 0; }
 
 void Tower::Attach(const Tower tower) {
   if (tower.IsEmpty()) {
@@ -49,7 +49,7 @@ void Tower::Attach(const Tower tower) {
   }
   const auto new_height = this->Height() + tower.Height();
   const auto new_owner = tower.Top();
-  this->representation = pack(new_height, new_owner);
+  this->representation_ = pack(new_height, new_owner);
 }
 
 void Tower::DetachFrom(const Tower tower) {
@@ -60,7 +60,7 @@ void Tower::DetachFrom(const Tower tower) {
   }
   const auto new_height = thisHeight - otherHeight;
   const auto new_owner = this->Top();
-  this->representation = pack(new_height, new_owner);
+  this->representation_ = pack(new_height, new_owner);
 }
 
 bool Move::operator==(const Move &other) const noexcept {

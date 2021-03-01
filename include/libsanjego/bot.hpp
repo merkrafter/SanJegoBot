@@ -56,13 +56,13 @@ class Explorer {
    * Creates an explorer backed by the standard rule set.
    */
   explicit Explorer()
-      : rules(std::make_unique<StandardRuleset<HEIGHT, WIDTH>>()) {}
+      : rules_(std::make_unique<StandardRuleset<HEIGHT, WIDTH>>()) {}
   virtual SearchResult Explore(const Board<HEIGHT, WIDTH> &board,
                                Color active_player) noexcept = 0;
 
  protected:
   // TODO allow general rule sets
-  std::unique_ptr<StandardRuleset<HEIGHT, WIDTH>> rules;
+  std::unique_ptr<StandardRuleset<HEIGHT, WIDTH>> rules_;
 };
 
 template <board_size_t HEIGHT, board_size_t WIDTH>
@@ -80,14 +80,14 @@ template <board_size_t HEIGHT, board_size_t WIDTH>
 SearchResult FullExplorer<HEIGHT, WIDTH>::Explore(
     const Board<HEIGHT, WIDTH> &board, const Color active_player) noexcept {
   const auto start = std::chrono::steady_clock::now();
-  auto possible_moves = this->rules->GetLegalMoves(board, active_player);
+  auto possible_moves = this->rules_->GetLegalMoves(board, active_player);
   auto best_move = Move::Skip();
   if (!possible_moves.empty()) {
     auto max_rating = std::numeric_limits<game_value_t>::min();
     auto tmp_board(board);
     for (auto &move : possible_moves) {
       tmp_board.Make(move);
-      const auto rating = this->rules->ComputeValueOf(tmp_board);
+      const auto rating = this->rules_->ComputeValueOf(tmp_board);
       tmp_board.Undo(move);
       if (rating > max_rating) {
         max_rating = rating;

@@ -90,7 +90,7 @@ class Tower {
   friend class Board;
 
  private:
-  tower_size_t representation;
+  tower_size_t representation_;
   /*
    * Marks this tower instance as empty. This is a safe alternative to nullptr.
    */
@@ -166,8 +166,8 @@ class Board {
    * with the colors alternating in a checkerboard-like pattern.
    */
   Board() {
-    field.reserve(HEIGHT * WIDTH);
-    details::set_checkerboard_pattern(field, HEIGHT, WIDTH);
+    fields_.reserve(HEIGHT * WIDTH);
+    details::set_checkerboard_pattern(fields_, HEIGHT, WIDTH);
   }
 
   /*
@@ -182,9 +182,9 @@ class Board {
       return false;
     }
     auto &sourceTower =
-        this->field[details::to_array_index(move.source, Width())];
+        this->fields_[details::to_array_index(move.source, Width())];
     auto &targetTower =
-        this->field[details::to_array_index(move.target, Width())];
+        this->fields_[details::to_array_index(move.target, Width())];
     move.affected_tower = targetTower;
     targetTower.Attach(sourceTower);
     sourceTower.Clear();
@@ -211,12 +211,12 @@ class Board {
     }
 
     auto &sourceTower =
-        this->field[details::to_array_index(move.source, Width())];
+        this->fields_[details::to_array_index(move.source, Width())];
     if (not sourceTower.IsEmpty()) {
       return false;
     }
     auto &targetTower =
-        this->field[details::to_array_index(move.target, Width())];
+        this->fields_[details::to_array_index(move.target, Width())];
 
     std::swap(sourceTower, targetTower);
     targetTower = move.affected_tower.value();
@@ -234,7 +234,8 @@ class Board {
     if (details::exceeds_border<HEIGHT, WIDTH>(position)) {
       return {};
     }
-    const auto tower = this->field[details::to_array_index(position, Width())];
+    const auto tower =
+        this->fields_[details::to_array_index(position, Width())];
     if (tower.IsEmpty()) {
       return {};
     }
@@ -245,7 +246,7 @@ class Board {
   [[nodiscard]] constexpr ColumnNr Width() const noexcept { return WIDTH; }
 
  private:
-  std::vector<Tower> field;
+  std::vector<Tower> fields_;
 };
 
 /*
