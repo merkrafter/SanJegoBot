@@ -148,13 +148,15 @@ std::vector<Move> StandardRuleset<HEIGHT, WIDTH>::GetLegalMoves(
   return legal_moves;
 }
 
+typedef std::int8_t game_value_t;
+
 /*
  * Returns the game-theoretical value of the given game field from the first
  * player's point of view, that is positive values indicate a better position
  * for the first player while negative values are better for the second.
  */
 template <board_size_t HEIGHT, board_size_t WIDTH>
-int8_t StandardRuleset<HEIGHT, WIDTH>::ComputeValueOf(
+game_value_t StandardRuleset<HEIGHT, WIDTH>::ComputeValueOf(
     const Board<HEIGHT, WIDTH> &board) noexcept {
   return board.Height() * board.Width() == 1;
 }

@@ -65,3 +65,11 @@ TEST_CASE("Should return skip when there is no legal move left", "[test]") {
     REQUIRE(computed_move.IsSkip());
   }
 }
+
+TEST_CASE("Time spent should be non-negative", "[fast]") {
+  const Board<5, 5> board;
+  FullExplorer<5, 5> explorer;
+  const auto active_player = Color::Blue;
+  const auto time_spent = explorer.Explore(board, active_player).seconds_spent;
+  REQUIRE(time_spent >= 0);
+}

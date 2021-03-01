@@ -19,7 +19,9 @@
 
 #pragma once
 
+#include <chrono>
 #include <cstdint>
+#include <limits>
 #include <memory>
 #include <optional>
 
@@ -70,29 +72,36 @@ class FullExplorer : Explorer<HEIGHT, WIDTH> {
                        Color active_player) noexcept;
 };
 
+/*
+ * Searches the game tree to find interesting states and strong moves.
+ * Returns a move considered "best" as well as some statistics on the search.
+ */
 template <board_size_t HEIGHT, board_size_t WIDTH>
 SearchResult FullExplorer<HEIGHT, WIDTH>::Explore(
     const Board<HEIGHT, WIDTH> &board, const Color active_player) noexcept {
-  if (active_player == Color::Blue) {
-    auto result = SearchResult{.num_explored_nodes = 1,
-                               .seconds_spent = 0,
-                               .best_move = Move{{0, 0}, {0, 1}},
-                               .max_explored_depth = 1,
-                               .winner = {}};
-    if (!this->rules->MoveIsAllowedOn(board, result.best_move, active_player)) {
-      result.best_move = Move::Skip();
+  const auto start = std::chrono::steady_clock::now();
+  auto possible_moves = this->rules->GetLegalMoves(board, active_player);
+  auto best_move = Move::Skip();
+  if (!possible_moves.empty()) {
+    auto max_rating = std::numeric_limits<game_value_t>::min();
+    for (auto &move : possible_moves) {
+      auto tmp_board(board);
+      tmp_board.Make(move);
+      const auto rating = this->rules->ComputeValueOf(tmp_board);
+      if (rating > max_rating) {
+        max_rating = rating;
+        best_move = move;
+      }
     }
-    return result;
-  } else {
-    auto result = SearchResult{.num_explored_nodes = 1,
-                               .seconds_spent = 0,
-                               .best_move = Move{{0, 1}, {0, 0}},
-                               .max_explored_depth = 1,
-                               .winner = {}};
-    if (!this->rules->MoveIsAllowedOn(board, result.best_move, active_player)) {
-      result.best_move = Move::Skip();
-    }
-    return result;
   }
+  const auto end = std::chrono::steady_clock::now();
+  const std::chrono::duration<double> seconds_spent = end - start;
+  return SearchResult{
+      .num_explored_nodes = possible_moves.size(),
+      .seconds_spent = seconds_spent.count(),
+      .best_move = best_move,
+      .max_explored_depth = 1,
+      .winner = {},
+  };
 }
 }  // namespace libsanjego
