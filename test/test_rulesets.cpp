@@ -175,3 +175,17 @@ TEST_CASE("On a 2x2 board, each player has 4 possible opening moves",
     REQUIRE(legal_moves.size() == 4);
   }
 }
+
+TEST_CASE("A player owns a tower iff the top brick has their color", "[fast]") {
+  StandardRuleset<2, 3> ruleset;  // arbitrary size
+  SECTION("blue") {
+    const Tower blue_tower{Color::Blue};
+    REQUIRE(ruleset.OwnsTower(Color::Blue, blue_tower));
+    REQUIRE_FALSE(ruleset.OwnsTower(Color::Yellow, blue_tower));
+  }
+  SECTION("yellow") {
+    const Tower yellow_tower{Color::Yellow};
+    REQUIRE(ruleset.OwnsTower(Color::Yellow, yellow_tower));
+    REQUIRE_FALSE(ruleset.OwnsTower(Color::Blue, yellow_tower));
+  }
+}

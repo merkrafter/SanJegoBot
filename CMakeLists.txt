@@ -17,7 +17,7 @@ add_library(sanjego STATIC)
 target_sources(
   sanjego
   PRIVATE include/libsanjego/types.hpp include/libsanjego/gameobjects.hpp
-          src/gameobjects.cpp include/libsanjego/rulesets.hpp src/rulesets.cpp)
+          src/gameobjects.cpp include/libsanjego/rulesets.hpp)
 
 # Internal file can import the header files directly.
 target_include_directories(
