@@ -27,17 +27,6 @@
 #include "gameobjects.hpp"
 
 namespace libsanjego {
-namespace details {
-
-/*
- * Returns whether the player with the given color is allowed to move the given
- * tower.
- * In the standard ruleset, this is the case if the top brick of the tower has
- * the given color.
- */
-bool OwnsTower(Color, Tower);
-}  // namespace details
-
 /*
  * A ruleset brings life into game objects and defines how they are allowed to
  * interact with each other.
@@ -58,6 +47,14 @@ class Ruleset {
   virtual std::vector<Move> GetLegalMoves(
       const Board<HEIGHT, WIDTH> &board,
       const Color active_player) noexcept = 0;
+
+  /*
+   * Returns whether the player with the given color is allowed to move the
+   * given tower. In the standard ruleset, this is the case if the top brick of
+   * the tower has the given color.
+   */
+  [[nodiscard]] virtual bool OwnsTower(const Color,
+                                       const Tower &) const noexcept = 0;
 };
 
 template <board_size_t HEIGHT, board_size_t WIDTH>
@@ -83,6 +80,12 @@ class StandardRuleset : Ruleset<HEIGHT, WIDTH> {
 
   std::vector<Move> GetLegalMoves(const Board<HEIGHT, WIDTH> &board,
                                   const Color active_player) noexcept;
+  /*
+   * Returns whether the player with the given color is allowed to move the
+   * given tower. This is the case if the top brick of the tower has the given
+   * color.
+   */
+  [[nodiscard]] bool OwnsTower(const Color, const Tower &) const noexcept;
 };
 
 /*
@@ -107,7 +110,7 @@ bool StandardRuleset<HEIGHT, WIDTH>::MoveIsAllowedOn(
   if (!targetTower.has_value()) {
     return false;
   }
-  if (!details::OwnsTower(active_player, sourceTower.value())) {
+  if (not OwnsTower(active_player, sourceTower.value())) {
     return false;
   }
   return true;
@@ -162,6 +165,12 @@ template <board_size_t HEIGHT, board_size_t WIDTH>
 game_value_t StandardRuleset<HEIGHT, WIDTH>::ComputeValueOf(
     const Board<HEIGHT, WIDTH> &board) noexcept {
   return board.MaxHeightOf(Color::Blue) - board.MaxHeightOf(Color::Yellow);
+}
+
+template <board_size_t HEIGHT, board_size_t WIDTH>
+bool StandardRuleset<HEIGHT, WIDTH>::OwnsTower(
+    const Color active_player, const Tower &tower) const noexcept {
+  return tower.top() == active_player;
 }
 
 template <board_size_t HEIGHT, board_size_t WIDTH>

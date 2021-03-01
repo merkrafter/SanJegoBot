@@ -17,7 +17,7 @@ add_library(sanjego STATIC)
 target_sources(
   sanjego
   PRIVATE include/libsanjego/types.hpp include/libsanjego/gameobjects.hpp
-          src/gameobjects.cpp include/libsanjego/rulesets.hpp src/rulesets.cpp)
+          src/gameobjects.cpp include/libsanjego/rulesets.hpp)
 
 # Internal file can import the header files directly.
 target_include_directories(
@@ -34,14 +34,18 @@ add_library(sanjego_bot STATIC)
 target_sources(sanjego_bot PRIVATE include/libsanjego/bot.hpp)
 target_link_libraries(sanjego_bot PRIVATE sanjego)
 
-find_package(Catch2)
-if(NOT Catch2_FOUND)
-  include(FetchContent)
-  FetchContent_Declare(
-    Catch2
-    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-    GIT_TAG v2.13.1)
-  FetchContent_MakeAvailable(Catch2)
+include(CTest)
+if(BUILD_TESTING)
+  find_package(Catch2)
+  if(NOT Catch2_FOUND)
+    include(FetchContent)
+    FetchContent_Declare(
+      Catch2
+      GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+      GIT_TAG v2.13.1)
+    FetchContent_MakeAvailable(Catch2)
+  endif()
+
+  enable_testing()
+  add_subdirectory(test)
 endif()
-enable_testing()
-add_subdirectory(test)

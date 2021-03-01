@@ -15,6 +15,10 @@ $ cmake --build build --target sanjego
 ```
 
 ## Building and running the tests
+
+The option for building tests is called `BUILD_TESTING`.
+It is turned on by default, but you can deactivate it by passing `-DBUILD_TESTING=OFF` to the initialization command.
+
 ```bash
 $ cmake -E make_directory build
 $ cmake -B build -S path/to/this/directory
