@@ -26,50 +26,50 @@ using namespace libsanjego;
 
 TEST_CASE("Newly created tower should have height 1", "[fast]") {
   const Tower tower(Color::Blue);
-  REQUIRE(tower.Height() == 1);
+  REQUIRE(tower.height() == 1);
 }
 
 TEST_CASE("Tower should store 1st player as owner correctly", "[fast]") {
   const Tower tower(Color::Blue);
-  REQUIRE(tower.Top() == Color::Blue);
+  REQUIRE(tower.top() == Color::Blue);
 }
 
 TEST_CASE("Tower should store 2nd player as owner correctly", "[fast]") {
   const Tower tower(Color::Yellow);
-  REQUIRE(tower.Top() == Color::Yellow);
+  REQUIRE(tower.top() == Color::Yellow);
 }
 
-TEST_CASE("Top-left tower of newly created board is first player's", "[fast]") {
+TEST_CASE("top-left tower of newly created board is first player's", "[fast]") {
   Board<2, 2> board;
   const std::optional<Tower> tower = board.GetTowerAt({0, 0});
-  REQUIRE(tower.value().Top() == Color::Blue);
+  REQUIRE(tower.value().top() == Color::Blue);
 }
 
 TEST_CASE("Tower at (0,1) of newly created board is second player's",
           "[fast]") {
   Board<2, 2> board;
   const std::optional<Tower> tower = board.GetTowerAt({0, 1});
-  REQUIRE(tower.value().Top() == Color::Yellow);
+  REQUIRE(tower.value().top() == Color::Yellow);
 }
 
 TEST_CASE("Tower at (1,0) of newly created board is second player's",
           "[fast]") {
   Board<2, 2> board;
   const std::optional<Tower> tower = board.GetTowerAt({1, 0});
-  REQUIRE(tower.value().Top() == Color::Yellow);
+  REQUIRE(tower.value().top() == Color::Yellow);
 }
 
 TEST_CASE("Tower at (1,1) of newly created board is first player's", "[fast]") {
   Board<2, 2> board;
   const std::optional<Tower> tower = board.GetTowerAt({1, 1});
-  REQUIRE(tower.value().Top() == Color::Blue);
+  REQUIRE(tower.value().top() == Color::Blue);
 }
 
 TEST_CASE("Attaching towers adds their heights", "[fast]") {
   Tower source(Color::Blue);
   Tower target(Color::Yellow);
   target.Attach(source);
-  REQUIRE(target.Height() == 2);
+  REQUIRE(target.height() == 2);
 }
 
 TEST_CASE("Attached towers keep their top brick", "[fast]") {
@@ -77,36 +77,36 @@ TEST_CASE("Attached towers keep their top brick", "[fast]") {
     Tower source(Color::Yellow);
     Tower target(Color::Blue);
     target.Attach(source);
-    REQUIRE(target.Top() == source.Top());
+    REQUIRE(target.top() == source.top());
   }
   SECTION("Blue on top") {
     Tower source(Color::Blue);
     Tower target(Color::Yellow);
     target.Attach(source);
-    REQUIRE(target.Top() == source.Top());
+    REQUIRE(target.top() == source.top());
   }
 }
 
 TEST_CASE("Detaching towers subtracts their heights", "[fast]") {
   const Tower source(Color::Blue);
   Tower target(Color::Yellow);
-  const Tower originalTarget(target);
+  const Tower original_target(target);
 
   target.Attach(source);
 
-  target.DetachFrom(originalTarget);
-  REQUIRE(target.Height() == source.Height());
+  target.DetachFrom(original_target);
+  REQUIRE(target.height() == source.height());
 }
 
 TEST_CASE("Detaching towers restores top brick", "[fast]") {
   const Tower source(Color::Blue);
   Tower target(Color::Yellow);
-  const Tower originalTarget(target);
+  const Tower original_target(target);
 
   target.Attach(source);
 
-  target.DetachFrom(originalTarget);
-  REQUIRE(target.Top() == source.Top());
+  target.DetachFrom(original_target);
+  REQUIRE(target.top() == source.top());
 }
 
 TEST_CASE("Positions are equal if both coordinates are equal", "[fast]") {
@@ -179,19 +179,19 @@ TEST_CASE("Moving towers adds the heights of source and target", "[fast]") {
   Move move{source, target};
   board.Make(move);
   const std::optional<Tower> resulting_tower = board.GetTowerAt(target);
-  REQUIRE(resulting_tower.value().Height() == 2);
+  REQUIRE(resulting_tower.value().height() == 2);
 }
 
 TEST_CASE("Moved towers keep their top brick's color", "[fast]") {
   Board<2, 2> board;  // initializes board with blue tower at (0,0)
   const Position source{0, 0};
   const Position target{0, 1};
-  const auto sourceTowerColor = board.GetTowerAt(source).value().Top();
+  const auto source_tower_color = board.GetTowerAt(source).value().top();
 
   Move move{source, target};
   board.Make(move);
   const std::optional<Tower> resulting_tower = board.GetTowerAt(target);
-  REQUIRE(resulting_tower.value().Top() == sourceTowerColor);
+  REQUIRE(resulting_tower.value().top() == source_tower_color);
 }
 
 TEST_CASE("'Moving' towers from and to the same position fails", "[fast]") {
@@ -243,8 +243,8 @@ TEST_CASE("After being moved, the source tower's position is empty", "[fast]") {
   Move move{source, target};
   board.Make(move);
 
-  const std::optional<Tower> sourceField = board.GetTowerAt(source);
-  REQUIRE_FALSE(sourceField.has_value());
+  const std::optional<Tower> source_field = board.GetTowerAt(source);
+  REQUIRE_FALSE(source_field.has_value());
 }
 
 TEST_CASE("Moves can be reverted", "[fast]") {
@@ -252,25 +252,25 @@ TEST_CASE("Moves can be reverted", "[fast]") {
   const Position source{0, 0};
   const Position target{0, 1};
 
-  const auto originalSourceTower{board.GetTowerAt(source)};
-  const auto originalTargetTower{board.GetTowerAt(target)};
+  const auto original_source_tower{board.GetTowerAt(source)};
+  const auto original_target_tower{board.GetTowerAt(target)};
 
   Move move{source, target};
   board.Make(move);
   const auto success = board.Undo(move);
   REQUIRE(success);
 
-  const auto sourceTower = board.GetTowerAt(source);
-  const auto targetTower = board.GetTowerAt(target);
+  const auto source_tower = board.GetTowerAt(source);
+  const auto target_tower = board.GetTowerAt(target);
 
   // original configuration should have been restored
-  REQUIRE(sourceTower.has_value());
-  REQUIRE(sourceTower->Height() == originalSourceTower->Height());
-  REQUIRE(sourceTower->Top() == originalSourceTower->Top());
+  REQUIRE(source_tower.has_value());
+  REQUIRE(source_tower->height() == original_source_tower->height());
+  REQUIRE(source_tower->top() == original_source_tower->top());
 
-  REQUIRE(targetTower.has_value());
-  REQUIRE(targetTower->Height() == originalTargetTower->Height());
-  REQUIRE(targetTower->Top() == originalTargetTower->Top());
+  REQUIRE(target_tower.has_value());
+  REQUIRE(target_tower->height() == original_target_tower->height());
+  REQUIRE(target_tower->top() == original_target_tower->top());
 }
 
 TEST_CASE("Move reversal fails outside the board's borders", "[fast]") {

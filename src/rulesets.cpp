@@ -20,7 +20,7 @@
 
 namespace libsanjego::details {
 
-bool owns_tower(const Color active_player, const Tower tower) {
-  return tower.Top() == active_player;
+bool OwnsTower(Color active_player, Tower tower) {
+  return tower.top() == active_player;
 }
 }  // namespace libsanjego::details

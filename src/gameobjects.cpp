@@ -24,43 +24,43 @@ namespace libsanjego {
 
 // least significant bit
 constexpr uint8_t OWNER_BIT = 1;
-constexpr uint8_t without_owner(uint8_t data) { return data >> OWNER_BIT; }
-constexpr tower_size_t pack(const tower_size_t height, const Color color) {
+constexpr uint8_t WithoutOwner(uint8_t data) { return data >> OWNER_BIT; }
+constexpr tower_size_t Pack(const tower_size_t height, const Color color) {
   return height << OWNER_BIT | static_cast<uint8_t>(color);
 }
 
-Tower::Tower(const Color color) : representation(pack(1, color)) {}
+Tower::Tower(const Color color) : representation_(Pack(1, color)) {}
 
-Color Tower::Top() const noexcept {
-  return static_cast<Color>(this->representation & OWNER_BIT);
+Color Tower::top() const noexcept {
+  return static_cast<Color>(this->representation_ & OWNER_BIT);
 }
 
-tower_size_t Tower::Height() const noexcept {
-  return without_owner(this->representation);
+tower_size_t Tower::height() const noexcept {
+  return WithoutOwner(this->representation_);
 }
 
-void Tower::Clear() noexcept { this->representation = 0; }
+void Tower::Clear() noexcept { this->representation_ = 0; }
 
-bool Tower::IsEmpty() const noexcept { return this->representation == 0; }
+bool Tower::IsEmpty() const noexcept { return this->representation_ == 0; }
 
 void Tower::Attach(const Tower tower) {
   if (tower.IsEmpty()) {
     return;
   }
-  const auto new_height = this->Height() + tower.Height();
-  const auto new_owner = tower.Top();
-  this->representation = pack(new_height, new_owner);
+  const auto new_height = this->height() + tower.height();
+  const auto new_owner = tower.top();
+  this->representation_ = Pack(new_height, new_owner);
 }
 
 void Tower::DetachFrom(const Tower tower) {
-  const auto thisHeight = this->Height();
-  const auto otherHeight = tower.Height();
-  if (otherHeight >= thisHeight) {
+  const auto this_height = this->height();
+  const auto other_height = tower.height();
+  if (other_height >= this_height) {
     return;
   }
-  const auto new_height = thisHeight - otherHeight;
-  const auto new_owner = this->Top();
-  this->representation = pack(new_height, new_owner);
+  const auto new_height = this_height - other_height;
+  const auto new_owner = this->top();
+  this->representation_ = Pack(new_height, new_owner);
 }
 
 bool Move::operator==(const Move &other) const noexcept {
@@ -79,12 +79,12 @@ bool Position::operator==(const Position &other) const noexcept {
 }
 
 namespace details {
-uint32_t to_array_index(const Position position, const ColumnNr boardWidth) {
-  return position.row * boardWidth + position.column;
+uint32_t ToArrayIndex(Position position, ColumnNr board_width) {
+  return position.row * board_width + position.column;
 }
 
-void set_checkerboard_pattern(std::vector<Tower> &field, const RowNr height,
-                              const ColumnNr width) {
+void SetCheckerboardPattern(std::vector<Tower> &field, RowNr height,
+                            ColumnNr width) {
   for (int row = 0; row < height; row++) {
     for (int col = 0; col < width; col++) {
       field.push_back(Tower(static_cast<Color>((row + col) % 2)));
@@ -92,5 +92,4 @@ void set_checkerboard_pattern(std::vector<Tower> &field, const RowNr height,
   }
 }
 }  // namespace details
-
 }  // namespace libsanjego
