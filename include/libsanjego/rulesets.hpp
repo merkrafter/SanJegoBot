@@ -161,7 +161,7 @@ typedef std::int8_t game_value_t;
 template <board_size_t HEIGHT, board_size_t WIDTH>
 game_value_t StandardRuleset<HEIGHT, WIDTH>::ComputeValueOf(
     const Board<HEIGHT, WIDTH> &board) noexcept {
-  return board.height() * board.width() == 1;
+  return board.MaxHeightOf(Color::Blue) - board.MaxHeightOf(Color::Yellow);
 }
 
 template <board_size_t HEIGHT, board_size_t WIDTH>
