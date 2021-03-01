@@ -64,21 +64,80 @@ TEST_CASE("Moving a tower is illegal if source and target are equal",
   REQUIRE_FALSE(ruleset->MoveIsAllowedOn(board, move, Color::Blue));
 }
 
-// 3. move not allowed if no target tower
-// 4. move not allowed if no source tower
+TEST_CASE("Moving a tower is illegal if source is empty", "[fast]") {
+  Board<3, 4> board;  // arbitrary size
+  auto ruleset = CreateStandardRulesetFor(board);
+
+  const Position source{2, 2};
+  const Position target{2, 1};
+  Move move{source, target};
+  board.Make(move);
+
+  // now source is empty
+
+  REQUIRE_FALSE(ruleset->MoveIsAllowedOn(board, move, Color::Blue));
+}
+
+TEST_CASE("Moving a tower is illegal if target is empty", "[fast]") {
+  Board<3, 4> board;  // arbitrary size
+  auto ruleset = CreateStandardRulesetFor(board);
+
+  const Position source{2, 2};
+  const Position target{2, 1};
+  Move move{source, target};
+  board.Make(move);
+
+  // now source is empty
+
+  const Move counter{{2, 3}, source};
+
+  REQUIRE_FALSE(ruleset->MoveIsAllowedOn(board, counter, Color::Yellow));
+}
 
 // In this scenario, there is only one tower on the board which belongs to
 // the first player.
-TEST_CASE("Newly created Board of size 1 should have value 1", "[fast]") {
+TEST_CASE("Newly created board of size 1 should have value 1", "[fast]") {
   const Board<1, 1> board;
   auto ruleset = CreateStandardRulesetFor(board);
   REQUIRE(ruleset->ComputeValueOf(board) == 1);
 }
 
-TEST_CASE("Newly created Board should have value 0", "[fast]") {
+TEST_CASE("Newly created board should have value 0", "[fast]") {
   const Board<2, 2> board;
   auto ruleset = CreateStandardRulesetFor(board);
   REQUIRE(ruleset->ComputeValueOf(board) == 0);
+}
+
+TEST_CASE("Better position for blue have a positive game value", "[fast]") {
+  Board<2, 2> board;
+  auto ruleset = CreateStandardRulesetFor(board);
+
+  // moves a blue tower
+  Move arbitrary_legal_move{{0, 0}, {0, 1}};
+  board.Make(arbitrary_legal_move);
+
+  REQUIRE(ruleset->ComputeValueOf(board) > 0);
+}
+
+TEST_CASE("Better position for yellow have a negative game value", "[fast]") {
+  Board<2, 2> board;
+  auto ruleset = CreateStandardRulesetFor(board);
+
+  // moves a yellow tower
+  Move arbitrary_legal_move{{0, 1}, {0, 0}};
+  board.Make(arbitrary_legal_move);
+
+  REQUIRE(ruleset->ComputeValueOf(board) < 0);
+}
+
+TEST_CASE("After first move, the board should have a value of 1", "[fast]") {
+  Board<2, 2> board;
+  auto ruleset = CreateStandardRulesetFor(board);
+
+  Move arbitrary_legal_move{{0, 0}, {0, 1}};
+  board.Make(arbitrary_legal_move);
+
+  REQUIRE(ruleset->ComputeValueOf(board) == 1);
 }
 
 TEST_CASE("GetLegalMoves should return empty vector in an end state",
@@ -87,15 +146,15 @@ TEST_CASE("GetLegalMoves should return empty vector in an end state",
   auto ruleset = CreateStandardRulesetFor(board);
 
   SECTION("First player") {
-    const auto legalMoves = ruleset->GetLegalMoves(board, Color::Blue);
+    const auto legal_moves = ruleset->GetLegalMoves(board, Color::Blue);
 
-    REQUIRE(legalMoves.empty());
+    REQUIRE(legal_moves.empty());
   }
 
   SECTION("Second player") {
-    const auto legalMoves = ruleset->GetLegalMoves(board, Color::Yellow);
+    const auto legal_moves = ruleset->GetLegalMoves(board, Color::Yellow);
 
-    REQUIRE(legalMoves.empty());
+    REQUIRE(legal_moves.empty());
   }
 }
 
@@ -105,14 +164,14 @@ TEST_CASE("On a 2x2 board, each player has 4 possible opening moves",
   auto ruleset = CreateStandardRulesetFor(board);
 
   SECTION("First player") {
-    const auto legalMoves = ruleset->GetLegalMoves(board, Color::Blue);
+    const auto legal_moves = ruleset->GetLegalMoves(board, Color::Blue);
 
-    REQUIRE(legalMoves.size() == 4);
+    REQUIRE(legal_moves.size() == 4);
   }
 
   SECTION("Second player") {
-    const auto legalMoves = ruleset->GetLegalMoves(board, Color::Yellow);
+    const auto legal_moves = ruleset->GetLegalMoves(board, Color::Yellow);
 
-    REQUIRE(legalMoves.size() == 4);
+    REQUIRE(legal_moves.size() == 4);
   }
 }

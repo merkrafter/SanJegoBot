@@ -31,6 +31,9 @@ constexpr tower_size_t Pack(const tower_size_t height, const Color color) {
 
 Tower::Tower(const Color color) : representation_(Pack(1, color)) {}
 
+Tower::Tower(Color color, tower_size_t height)
+    : representation_(Pack(height, color)) {}
+
 Color Tower::top() const noexcept {
   return static_cast<Color>(this->representation_ & OWNER_BIT);
 }

@@ -39,6 +39,7 @@ typedef std::uint16_t tower_size_t;
 struct RowNr {
   constexpr RowNr(board_size_t v) noexcept : m_value(v){};
   constexpr operator board_size_t() const noexcept { return m_value; }
+  constexpr RowNr operator++() noexcept { return ++m_value; };
   board_size_t m_value;
 };
 
@@ -48,6 +49,7 @@ struct RowNr {
 struct ColumnNr {
   constexpr ColumnNr(board_size_t v) noexcept : m_value(v){};
   constexpr operator board_size_t() const noexcept { return m_value; }
+  constexpr ColumnNr operator++() noexcept { return ++m_value; };
   board_size_t m_value;
 };
 
