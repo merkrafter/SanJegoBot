@@ -20,6 +20,7 @@
 
 #include <cstdint>
 #include <optional>
+#include <utility>
 #include <vector>
 
 #include "types.hpp"
@@ -150,6 +151,13 @@ struct Move {
   static Move Skip() noexcept;
 };
 
+namespace details {
+// function to make the query more readable
+inline bool was_made_before(const Move &move) noexcept {
+  return move.affected_tower.has_value();
+}
+}  // namespace details
+
 template <board_size_t HEIGHT, board_size_t WIDTH>
 class Board {
  public:
@@ -180,6 +188,40 @@ class Board {
     move.affected_tower = targetTower;
     targetTower.Attach(sourceTower);
     sourceTower.Clear();
+    return true;
+  }
+
+  /*
+   * Reverts a move previously made on this board and returns whether this
+   * was successful.
+   * This operation fails is the coordinates of the move are outside the board's
+   * borders, the move has no information about the state before it was made,
+   * or the source position of the move is not empty, indicating that the move
+   * has not been done on *this* board before.
+   */
+  bool Undo(Move &move) noexcept {
+    if (details::exceeds_border<HEIGHT, WIDTH>(move.source) ||
+        details::exceeds_border<HEIGHT, WIDTH>(move.target) ||
+        move.source == move.target) {
+      return false;
+    }
+
+    if (not details::was_made_before(move)) {
+      return false;
+    }
+
+    auto &sourceTower =
+        this->field[details::to_array_index(move.source, Width())];
+    if (not sourceTower.IsEmpty()) {
+      return false;
+    }
+    auto &targetTower =
+        this->field[details::to_array_index(move.target, Width())];
+
+    std::swap(sourceTower, targetTower);
+    targetTower = move.affected_tower.value();
+    sourceTower.DetachFrom(targetTower);
+
     return true;
   }
 
