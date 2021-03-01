@@ -69,16 +69,26 @@ TEST_CASE("Moving a tower is illegal if source and target are equal",
 
 // In this scenario, there is only one tower on the board which belongs to
 // the first player.
-TEST_CASE("Newly created Board of size 1 should have value 1", "[fast]") {
+TEST_CASE("Newly created board of size 1 should have value 1", "[fast]") {
   const Board<1, 1> board;
   auto ruleset = CreateStandardRulesetFor(board);
   REQUIRE(ruleset->ComputeValueOf(board) == 1);
 }
 
-TEST_CASE("Newly created Board should have value 0", "[fast]") {
+TEST_CASE("Newly created board should have value 0", "[fast]") {
   const Board<2, 2> board;
   auto ruleset = CreateStandardRulesetFor(board);
   REQUIRE(ruleset->ComputeValueOf(board) == 0);
+}
+
+TEST_CASE("After first move, the board should have a value of 1", "[fast]") {
+  Board<2, 2> board;
+  auto ruleset = CreateStandardRulesetFor(board);
+
+  Move arbitrary_legal_move{{0, 0}, {0, 1}};
+  board.Make(arbitrary_legal_move);
+
+  // REQUIRE(ruleset->ComputeValueOf(board) == 1);
 }
 
 TEST_CASE("GetLegalMoves should return empty vector in an end state",

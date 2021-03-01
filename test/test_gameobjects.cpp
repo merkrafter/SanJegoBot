@@ -302,3 +302,35 @@ TEST_CASE("Move reversal fails if the source is occupied", "[fast]") {
   const auto success = board.Undo(move);
   REQUIRE_FALSE(success);
 }
+
+TEST_CASE("After creation, the highest towers should have height 1", "[fast]") {
+  const Board<3, 4> board;
+  const auto height_of_highest_blue_tower = board.MaxHeightOf(Color::Blue);
+  const auto height_of_highest_yellow_tower = board.MaxHeightOf(Color::Yellow);
+
+  REQUIRE(height_of_highest_blue_tower == 1);
+  REQUIRE(height_of_highest_yellow_tower == 1);
+}
+
+TEST_CASE("After blue's first move, their highest towers should have height 2",
+          "[fast]") {
+  Board<3, 4> board;
+
+  Move arbitrary_move{{2, 0}, {2, 1}};
+  board.Make(arbitrary_move);
+
+  const auto height_of_highest_blue_tower = board.MaxHeightOf(Color::Blue);
+
+  REQUIRE(height_of_highest_blue_tower == 2);
+}
+
+TEST_CASE("A player without tower should have max height 0", "[fast]") {
+  Board<2, 1> board;
+
+  Move arbitrary_move{{0, 0}, {1, 0}};
+  board.Make(arbitrary_move);
+
+  const auto height_of_highest_yellow_tower = board.MaxHeightOf(Color::Yellow);
+
+  REQUIRE(height_of_highest_yellow_tower == 0);
+}

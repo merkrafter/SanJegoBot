@@ -18,6 +18,7 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <cstdint>
 #include <optional>
 #include <utility>
@@ -240,6 +241,21 @@ class Board {
       return {};
     }
     return tower;
+  }
+
+  /*
+   * Computes the height of the highest tower that is owned by the player with
+   * the given color.
+   * If there is no tower with the given owner on the board, 0 is returned.
+   */
+  [[nodiscard]] tower_size_t MaxHeightOf(const Color owner) const noexcept {
+    tower_size_t max_height = 0;
+    for (const Tower &tower : fields_) {
+      if (tower.top() == owner) {
+        max_height = std::max(max_height, tower.height());
+      }
+    }
+    return max_height;
   }
 
   [[nodiscard]] constexpr RowNr height() const noexcept { return HEIGHT; }
