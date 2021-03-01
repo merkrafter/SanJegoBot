@@ -43,8 +43,8 @@ class Board;
 class Tower {
  public:
   explicit Tower(Color color);
-  [[nodiscard]] Color Top() const noexcept;
-  [[nodiscard]] tower_size_t Height() const noexcept;
+  [[nodiscard]] Color top() const noexcept;
+  [[nodiscard]] tower_size_t height() const noexcept;
 
   /*
    * Adds the given tower on top of *this* one. As a result, their heights are
@@ -109,21 +109,21 @@ struct Position {
 };
 
 namespace details {
-uint32_t to_array_index(Position position, ColumnNr board_width);
+uint32_t ToArrayIndex(Position position, ColumnNr board_width);
 
 /*
  * Initializes the field with height*width towers.
  * Assumes the field is empty before the operation.
  */
-void set_checkerboard_pattern(std::vector<Tower> &field, RowNr height,
-                              ColumnNr width);
+void SetCheckerboardPattern(std::vector<Tower> &field, RowNr height,
+                            ColumnNr width);
 
 /*
  * Returns whether the given position lies outside the rectangular region
  * defined by the template parameters and (0,0).
  */
 template <board_size_t HEIGHT, board_size_t WIDTH>
-bool exceeds_border(const Position &position) {
+bool ExceedsBorder(const Position &position) {
   return position.row < 0 || position.column < 0 || position.row >= HEIGHT ||
          position.column >= WIDTH;
 }
@@ -153,7 +153,7 @@ struct Move {
 
 namespace details {
 // function to make the query more readable
-inline bool was_made_before(const Move &move) noexcept {
+inline bool WasMadeBefore(const Move &move) noexcept {
   return move.affected_tower.has_value();
 }
 }  // namespace details
@@ -167,7 +167,7 @@ class Board {
    */
   Board() {
     fields_.reserve(HEIGHT * WIDTH);
-    details::set_checkerboard_pattern(fields_, HEIGHT, WIDTH);
+    details::SetCheckerboardPattern(fields_, HEIGHT, WIDTH);
   }
 
   /*
@@ -176,15 +176,15 @@ class Board {
    * Returns whether the move was carried out successfully.
    */
   bool Make(Move &move) noexcept {
-    if (details::exceeds_border<HEIGHT, WIDTH>(move.source) ||
-        details::exceeds_border<HEIGHT, WIDTH>(move.target) ||
+    if (details::ExceedsBorder<HEIGHT, WIDTH>(move.source) ||
+        details::ExceedsBorder<HEIGHT, WIDTH>(move.target) ||
         move.source == move.target) {
       return false;
     }
     auto &source_tower =
-        this->fields_[details::to_array_index(move.source, Width())];
+        this->fields_[details::ToArrayIndex(move.source, width())];
     auto &target_tower =
-        this->fields_[details::to_array_index(move.target, Width())];
+        this->fields_[details::ToArrayIndex(move.target, width())];
     move.affected_tower = target_tower;
     target_tower.Attach(source_tower);
     source_tower.Clear();
@@ -200,23 +200,23 @@ class Board {
    * has not been done on *this* board before.
    */
   bool Undo(Move &move) noexcept {
-    if (details::exceeds_border<HEIGHT, WIDTH>(move.source) ||
-        details::exceeds_border<HEIGHT, WIDTH>(move.target) ||
+    if (details::ExceedsBorder<HEIGHT, WIDTH>(move.source) ||
+        details::ExceedsBorder<HEIGHT, WIDTH>(move.target) ||
         move.source == move.target) {
       return false;
     }
 
-    if (not details::was_made_before(move)) {
+    if (not details::WasMadeBefore(move)) {
       return false;
     }
 
     auto &source_tower =
-        this->fields_[details::to_array_index(move.source, Width())];
+        this->fields_[details::ToArrayIndex(move.source, width())];
     if (not source_tower.IsEmpty()) {
       return false;
     }
     auto &target_tower =
-        this->fields_[details::to_array_index(move.target, Width())];
+        this->fields_[details::ToArrayIndex(move.target, width())];
 
     std::swap(source_tower, target_tower);
     target_tower = move.affected_tower.value();
@@ -231,19 +231,18 @@ class Board {
    */
   [[nodiscard]] std::optional<Tower> GetTowerAt(
       Position position) const noexcept {
-    if (details::exceeds_border<HEIGHT, WIDTH>(position)) {
+    if (details::ExceedsBorder<HEIGHT, WIDTH>(position)) {
       return {};
     }
-    const auto tower =
-        this->fields_[details::to_array_index(position, Width())];
+    const auto tower = this->fields_[details::ToArrayIndex(position, width())];
     if (tower.IsEmpty()) {
       return {};
     }
     return tower;
   }
 
-  [[nodiscard]] constexpr RowNr Height() const noexcept { return HEIGHT; }
-  [[nodiscard]] constexpr ColumnNr Width() const noexcept { return WIDTH; }
+  [[nodiscard]] constexpr RowNr height() const noexcept { return HEIGHT; }
+  [[nodiscard]] constexpr ColumnNr width() const noexcept { return WIDTH; }
 
  private:
   std::vector<Tower> fields_;

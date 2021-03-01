@@ -35,7 +35,7 @@ namespace details {
  * In the standard ruleset, this is the case if the top brick of the tower has
  * the given color.
  */
-bool owns_tower(Color, Tower);
+bool OwnsTower(Color, Tower);
 }  // namespace details
 
 /*
@@ -107,15 +107,18 @@ bool StandardRuleset<HEIGHT, WIDTH>::MoveIsAllowedOn(
   if (!targetTower.has_value()) {
     return false;
   }
-  if (!details::owns_tower(active_player, sourceTower.value())) {
+  if (!details::OwnsTower(active_player, sourceTower.value())) {
     return false;
   }
   return true;
 }
 
 namespace details {
+/*
+ * Whether they are legal or not depends on the rule set used.
+ */
 template <board_size_t HEIGHT, board_size_t WIDTH>
-auto getMovesToQuadNeighboursOn(const Board<HEIGHT, WIDTH> &board,
+auto GetMovesToQuadNeighboursOn(const Board<HEIGHT, WIDTH> &board,
                                 const Position pos) noexcept {
   std::array<Move, 4> moves_to_neighbours{
       Move{pos, Position{RowNr(pos.row + 1), pos.column}},
@@ -136,7 +139,7 @@ std::vector<Move> StandardRuleset<HEIGHT, WIDTH>::GetLegalMoves(
     for (board_size_t col = 0; col < WIDTH; ++col) {
       const Position pos{row, col};
       auto moves_to_neighbours =
-          details::getMovesToQuadNeighboursOn(board, pos);
+          details::GetMovesToQuadNeighboursOn(board, pos);
       for (auto &move : moves_to_neighbours) {
         if (MoveIsAllowedOn(board, move, active_player)) {
           legal_moves.push_back(move);
@@ -158,7 +161,7 @@ typedef std::int8_t game_value_t;
 template <board_size_t HEIGHT, board_size_t WIDTH>
 game_value_t StandardRuleset<HEIGHT, WIDTH>::ComputeValueOf(
     const Board<HEIGHT, WIDTH> &board) noexcept {
-  return board.Height() * board.Width() == 1;
+  return board.height() * board.width() == 1;
 }
 
 template <board_size_t HEIGHT, board_size_t WIDTH>
@@ -166,5 +169,4 @@ std::unique_ptr<StandardRuleset<HEIGHT, WIDTH>> CreateStandardRulesetFor(
     const Board<HEIGHT, WIDTH> &board) noexcept {
   return std::make_unique<StandardRuleset<HEIGHT, WIDTH>>();
 }
-
 }  // namespace libsanjego
