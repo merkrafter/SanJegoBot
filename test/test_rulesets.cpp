@@ -64,8 +64,35 @@ TEST_CASE("Moving a tower is illegal if source and target are equal",
   REQUIRE_FALSE(ruleset->MoveIsAllowedOn(board, move, Color::Blue));
 }
 
-// 3. move not allowed if no target tower
-// 4. move not allowed if no source tower
+TEST_CASE("Moving a tower is illegal if source is empty", "[fast]") {
+  Board<3, 4> board;  // arbitrary size
+  auto ruleset = CreateStandardRulesetFor(board);
+
+  const Position source{2, 2};
+  const Position target{2, 1};
+  Move move{source, target};
+  board.Make(move);
+
+  // now source is empty
+
+  REQUIRE_FALSE(ruleset->MoveIsAllowedOn(board, move, Color::Blue));
+}
+
+TEST_CASE("Moving a tower is illegal if target is empty", "[fast]") {
+  Board<3, 4> board;  // arbitrary size
+  auto ruleset = CreateStandardRulesetFor(board);
+
+  const Position source{2, 2};
+  const Position target{2, 1};
+  Move move{source, target};
+  board.Make(move);
+
+  // now source is empty
+
+  const Move counter{{2, 3}, source};
+
+  REQUIRE_FALSE(ruleset->MoveIsAllowedOn(board, counter, Color::Yellow));
+}
 
 // In this scenario, there is only one tower on the board which belongs to
 // the first player.
