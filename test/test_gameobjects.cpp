@@ -87,6 +87,28 @@ TEST_CASE("Attached towers keep their top brick", "[fast]") {
   }
 }
 
+TEST_CASE("Detaching towers subtracts their heights", "[fast]") {
+  const Tower source(Color::Blue);
+  Tower target(Color::Yellow);
+  const Tower originalTarget(target);
+
+  target.Attach(source);
+
+  target.DetachFrom(originalTarget);
+  REQUIRE(target.Height() == source.Height());
+}
+
+TEST_CASE("Detaching towers restores top brick", "[fast]") {
+  const Tower source(Color::Blue);
+  Tower target(Color::Yellow);
+  const Tower originalTarget(target);
+
+  target.Attach(source);
+
+  target.DetachFrom(originalTarget);
+  REQUIRE(target.Top() == source.Top());
+}
+
 TEST_CASE("Positions are equal if both coordinates are equal", "[fast]") {
   const Position pos1{0, 1};
   const Position pos2{0, 1};

@@ -48,8 +48,42 @@ class Tower {
   /*
    * Adds the given tower on top of *this* one. As a result, their heights are
    * added and the top brick is now the same as tower's.
+   *
+   * Example:
+   *   ```cpp
+   *   // initial situation (ground is left)
+   *   // source: |BBY
+   *   // target: |B
+   *
+   *   target.Attach(source)
+   *
+   *   // source: |BBY
+   *   // target: |BBBY
+   *   ```
    */
   void Attach(const Tower tower);
+
+  /*
+   * Removes the given tower from the bottom of *this* one. It is the inverse
+   * operation of Attach (note that the arguments are also inverted).
+   * As a result, *this* tower is shortened by the height of the given tower,
+   * and its top brick is left untouched. If the given tower does not form the
+   * bottom of *this* tower (leaving at least one brick in *this* instance), the
+   * operation does nothing.
+   *
+   * Example:
+   *   ```cpp
+   *   // initial situation (ground is left)
+   *   // source: |BBBY
+   *   // target: |B
+   *
+   *   source.DetachFrom(target)
+   *
+   *   // source: |BBY
+   *   // target: |B
+   *   ```
+   */
+  void DetachFrom(const Tower tower);
 
   template <board_size_t HEIGHT, board_size_t WIDTH>
   friend class Board;

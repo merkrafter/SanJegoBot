@@ -52,6 +52,17 @@ void Tower::Attach(const Tower tower) {
   this->representation = pack(new_height, new_owner);
 }
 
+void Tower::DetachFrom(const Tower tower) {
+  const auto thisHeight = this->Height();
+  const auto otherHeight = tower.Height();
+  if (otherHeight >= thisHeight) {
+    return;
+  }
+  const auto new_height = thisHeight - otherHeight;
+  const auto new_owner = this->Top();
+  this->representation = pack(new_height, new_owner);
+}
+
 bool Move::operator==(const Move &other) const noexcept {
   return this->source == other.source && this->target == other.target;
 }
