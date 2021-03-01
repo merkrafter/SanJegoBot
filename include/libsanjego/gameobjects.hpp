@@ -43,6 +43,7 @@ class Board;
 class Tower {
  public:
   explicit Tower(Color color);
+  explicit Tower(Color color, tower_size_t height);
   [[nodiscard]] Color top() const noexcept;
   [[nodiscard]] tower_size_t height() const noexcept;
 
