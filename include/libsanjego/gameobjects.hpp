@@ -20,6 +20,7 @@
 
 #include <cstdint>
 #include <optional>
+#include <utility>
 #include <vector>
 
 #include "types.hpp"
@@ -48,8 +49,42 @@ class Tower {
   /*
    * Adds the given tower on top of *this* one. As a result, their heights are
    * added and the top brick is now the same as tower's.
+   *
+   * Example:
+   *   ```cpp
+   *   // initial situation (ground is left)
+   *   // source: |BBY
+   *   // target: |B
+   *
+   *   target.Attach(source)
+   *
+   *   // source: |BBY
+   *   // target: |BBBY
+   *   ```
    */
   void Attach(const Tower tower);
+
+  /*
+   * Removes the given tower from the bottom of *this* one. It is the inverse
+   * operation of Attach (note that the arguments are also inverted).
+   * As a result, *this* tower is shortened by the height of the given tower,
+   * and its top brick is left untouched. If the given tower does not form the
+   * bottom of *this* tower (leaving at least one brick in *this* instance), the
+   * operation does nothing.
+   *
+   * Example:
+   *   ```cpp
+   *   // initial situation (ground is left)
+   *   // source: |BBBY
+   *   // target: |B
+   *
+   *   source.DetachFrom(target)
+   *
+   *   // source: |BBY
+   *   // target: |B
+   *   ```
+   */
+  void DetachFrom(const Tower tower);
 
   template <board_size_t HEIGHT, board_size_t WIDTH>
   friend class Board;
@@ -98,10 +133,13 @@ bool exceeds_border(const Position &position) {
  * A move a player wants to make in a game.
  * This does not mean a move object is necessarily legal; it depends on the
  * ruleset used.
+ * If a move is applied to a board, the target tower may be stored in this
+ * struct's affected_tower field to simplify reverting moves.
  */
 struct Move {
   Position source;
   Position target;
+  std::optional<Tower> affected_tower;
 
   bool operator==(const Move &other) const noexcept;
   Move &operator=(const Move &other) = default;
@@ -112,6 +150,13 @@ struct Move {
    */
   static Move Skip() noexcept;
 };
+
+namespace details {
+// function to make the query more readable
+inline bool was_made_before(const Move &move) noexcept {
+  return move.affected_tower.has_value();
+}
+}  // namespace details
 
 template <board_size_t HEIGHT, board_size_t WIDTH>
 class Board {
@@ -140,8 +185,43 @@ class Board {
         this->field[details::to_array_index(move.source, Width())];
     auto &targetTower =
         this->field[details::to_array_index(move.target, Width())];
+    move.affected_tower = targetTower;
     targetTower.Attach(sourceTower);
     sourceTower.Clear();
+    return true;
+  }
+
+  /*
+   * Reverts a move previously made on this board and returns whether this
+   * was successful.
+   * This operation fails is the coordinates of the move are outside the board's
+   * borders, the move has no information about the state before it was made,
+   * or the source position of the move is not empty, indicating that the move
+   * has not been done on *this* board before.
+   */
+  bool Undo(Move &move) noexcept {
+    if (details::exceeds_border<HEIGHT, WIDTH>(move.source) ||
+        details::exceeds_border<HEIGHT, WIDTH>(move.target) ||
+        move.source == move.target) {
+      return false;
+    }
+
+    if (not details::was_made_before(move)) {
+      return false;
+    }
+
+    auto &sourceTower =
+        this->field[details::to_array_index(move.source, Width())];
+    if (not sourceTower.IsEmpty()) {
+      return false;
+    }
+    auto &targetTower =
+        this->field[details::to_array_index(move.target, Width())];
+
+    std::swap(sourceTower, targetTower);
+    targetTower = move.affected_tower.value();
+    sourceTower.DetachFrom(targetTower);
+
     return true;
   }
 

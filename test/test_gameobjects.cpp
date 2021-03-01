@@ -87,6 +87,28 @@ TEST_CASE("Attached towers keep their top brick", "[fast]") {
   }
 }
 
+TEST_CASE("Detaching towers subtracts their heights", "[fast]") {
+  const Tower source(Color::Blue);
+  Tower target(Color::Yellow);
+  const Tower originalTarget(target);
+
+  target.Attach(source);
+
+  target.DetachFrom(originalTarget);
+  REQUIRE(target.Height() == source.Height());
+}
+
+TEST_CASE("Detaching towers restores top brick", "[fast]") {
+  const Tower source(Color::Blue);
+  Tower target(Color::Yellow);
+  const Tower originalTarget(target);
+
+  target.Attach(source);
+
+  target.DetachFrom(originalTarget);
+  REQUIRE(target.Top() == source.Top());
+}
+
 TEST_CASE("Positions are equal if both coordinates are equal", "[fast]") {
   const Position pos1{0, 1};
   const Position pos2{0, 1};
@@ -223,4 +245,60 @@ TEST_CASE("After being moved, the source tower's position is empty", "[fast]") {
 
   const std::optional<Tower> sourceField = board.GetTowerAt(source);
   REQUIRE_FALSE(sourceField.has_value());
+}
+
+TEST_CASE("Moves can be reverted", "[fast]") {
+  Board<2, 2> board;
+  const Position source{0, 0};
+  const Position target{0, 1};
+
+  const auto originalSourceTower{board.GetTowerAt(source)};
+  const auto originalTargetTower{board.GetTowerAt(target)};
+
+  Move move{source, target};
+  board.Make(move);
+  const auto success = board.Undo(move);
+  REQUIRE(success);
+
+  const auto sourceTower = board.GetTowerAt(source);
+  const auto targetTower = board.GetTowerAt(target);
+
+  // original configuration should have been restored
+  REQUIRE(sourceTower.has_value());
+  REQUIRE(sourceTower->Height() == originalSourceTower->Height());
+  REQUIRE(sourceTower->Top() == originalSourceTower->Top());
+
+  REQUIRE(targetTower.has_value());
+  REQUIRE(targetTower->Height() == originalTargetTower->Height());
+  REQUIRE(targetTower->Top() == originalTargetTower->Top());
+}
+
+TEST_CASE("Move reversal fails outside the board's borders", "[fast]") {
+  Board<2, 2> board;
+  const Position source{0, 0};
+  const Position target{0, 1};
+  const Position invalid{-1, -1};
+
+  Move move{source, target};
+  REQUIRE(board.Make(move));
+
+  move.source = invalid;
+
+  const auto success = board.Undo(move);
+  REQUIRE_FALSE(success);
+}
+
+TEST_CASE("Move reversal fails if the source is occupied", "[fast]") {
+  Board<2, 2> board;
+  const Position source{0, 0};
+  const Position target{0, 1};
+  const Position unrelated{1, 1};
+
+  Move move{source, target};
+  REQUIRE(board.Make(move));
+
+  move.source = unrelated;
+
+  const auto success = board.Undo(move);
+  REQUIRE_FALSE(success);
 }
