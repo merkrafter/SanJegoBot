@@ -53,12 +53,12 @@ void Tower::Attach(const Tower tower) {
 }
 
 void Tower::DetachFrom(const Tower tower) {
-  const auto thisHeight = this->Height();
-  const auto otherHeight = tower.Height();
-  if (otherHeight >= thisHeight) {
+  const auto this_height = this->Height();
+  const auto other_height = tower.Height();
+  if (other_height >= this_height) {
     return;
   }
-  const auto new_height = thisHeight - otherHeight;
+  const auto new_height = this_height - other_height;
   const auto new_owner = this->Top();
   this->representation_ = pack(new_height, new_owner);
 }
@@ -79,8 +79,8 @@ bool Position::operator==(const Position &other) const noexcept {
 }
 
 namespace details {
-uint32_t to_array_index(const Position position, const ColumnNr boardWidth) {
-  return position.row * boardWidth + position.column;
+uint32_t to_array_index(const Position position, const ColumnNr board_width) {
+  return position.row * board_width + position.column;
 }
 
 void set_checkerboard_pattern(std::vector<Tower> &field, const RowNr height,
@@ -92,5 +92,4 @@ void set_checkerboard_pattern(std::vector<Tower> &field, const RowNr height,
   }
 }
 }  // namespace details
-
 }  // namespace libsanjego

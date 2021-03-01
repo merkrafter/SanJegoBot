@@ -90,22 +90,22 @@ TEST_CASE("Attached towers keep their top brick", "[fast]") {
 TEST_CASE("Detaching towers subtracts their heights", "[fast]") {
   const Tower source(Color::Blue);
   Tower target(Color::Yellow);
-  const Tower originalTarget(target);
+  const Tower original_target(target);
 
   target.Attach(source);
 
-  target.DetachFrom(originalTarget);
+  target.DetachFrom(original_target);
   REQUIRE(target.Height() == source.Height());
 }
 
 TEST_CASE("Detaching towers restores top brick", "[fast]") {
   const Tower source(Color::Blue);
   Tower target(Color::Yellow);
-  const Tower originalTarget(target);
+  const Tower original_target(target);
 
   target.Attach(source);
 
-  target.DetachFrom(originalTarget);
+  target.DetachFrom(original_target);
   REQUIRE(target.Top() == source.Top());
 }
 
@@ -186,12 +186,12 @@ TEST_CASE("Moved towers keep their top brick's color", "[fast]") {
   Board<2, 2> board;  // initializes board with blue tower at (0,0)
   const Position source{0, 0};
   const Position target{0, 1};
-  const auto sourceTowerColor = board.GetTowerAt(source).value().Top();
+  const auto source_tower_color = board.GetTowerAt(source).value().Top();
 
   Move move{source, target};
   board.Make(move);
   const std::optional<Tower> resulting_tower = board.GetTowerAt(target);
-  REQUIRE(resulting_tower.value().Top() == sourceTowerColor);
+  REQUIRE(resulting_tower.value().Top() == source_tower_color);
 }
 
 TEST_CASE("'Moving' towers from and to the same position fails", "[fast]") {
@@ -243,8 +243,8 @@ TEST_CASE("After being moved, the source tower's position is empty", "[fast]") {
   Move move{source, target};
   board.Make(move);
 
-  const std::optional<Tower> sourceField = board.GetTowerAt(source);
-  REQUIRE_FALSE(sourceField.has_value());
+  const std::optional<Tower> source_field = board.GetTowerAt(source);
+  REQUIRE_FALSE(source_field.has_value());
 }
 
 TEST_CASE("Moves can be reverted", "[fast]") {
@@ -252,25 +252,25 @@ TEST_CASE("Moves can be reverted", "[fast]") {
   const Position source{0, 0};
   const Position target{0, 1};
 
-  const auto originalSourceTower{board.GetTowerAt(source)};
-  const auto originalTargetTower{board.GetTowerAt(target)};
+  const auto original_source_tower{board.GetTowerAt(source)};
+  const auto original_target_tower{board.GetTowerAt(target)};
 
   Move move{source, target};
   board.Make(move);
   const auto success = board.Undo(move);
   REQUIRE(success);
 
-  const auto sourceTower = board.GetTowerAt(source);
-  const auto targetTower = board.GetTowerAt(target);
+  const auto source_tower = board.GetTowerAt(source);
+  const auto target_tower = board.GetTowerAt(target);
 
   // original configuration should have been restored
-  REQUIRE(sourceTower.has_value());
-  REQUIRE(sourceTower->Height() == originalSourceTower->Height());
-  REQUIRE(sourceTower->Top() == originalSourceTower->Top());
+  REQUIRE(source_tower.has_value());
+  REQUIRE(source_tower->Height() == original_source_tower->Height());
+  REQUIRE(source_tower->Top() == original_source_tower->Top());
 
-  REQUIRE(targetTower.has_value());
-  REQUIRE(targetTower->Height() == originalTargetTower->Height());
-  REQUIRE(targetTower->Top() == originalTargetTower->Top());
+  REQUIRE(target_tower.has_value());
+  REQUIRE(target_tower->Height() == original_target_tower->Height());
+  REQUIRE(target_tower->Top() == original_target_tower->Top());
 }
 
 TEST_CASE("Move reversal fails outside the board's borders", "[fast]") {

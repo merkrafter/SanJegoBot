@@ -109,7 +109,7 @@ struct Position {
 };
 
 namespace details {
-uint32_t to_array_index(Position position, ColumnNr boardWidth);
+uint32_t to_array_index(Position position, ColumnNr board_width);
 
 /*
  * Initializes the field with height*width towers.
@@ -181,13 +181,13 @@ class Board {
         move.source == move.target) {
       return false;
     }
-    auto &sourceTower =
+    auto &source_tower =
         this->fields_[details::to_array_index(move.source, Width())];
-    auto &targetTower =
+    auto &target_tower =
         this->fields_[details::to_array_index(move.target, Width())];
-    move.affected_tower = targetTower;
-    targetTower.Attach(sourceTower);
-    sourceTower.Clear();
+    move.affected_tower = target_tower;
+    target_tower.Attach(source_tower);
+    source_tower.Clear();
     return true;
   }
 
@@ -210,17 +210,17 @@ class Board {
       return false;
     }
 
-    auto &sourceTower =
+    auto &source_tower =
         this->fields_[details::to_array_index(move.source, Width())];
-    if (not sourceTower.IsEmpty()) {
+    if (not source_tower.IsEmpty()) {
       return false;
     }
-    auto &targetTower =
+    auto &target_tower =
         this->fields_[details::to_array_index(move.target, Width())];
 
-    std::swap(sourceTower, targetTower);
-    targetTower = move.affected_tower.value();
-    sourceTower.DetachFrom(targetTower);
+    std::swap(source_tower, target_tower);
+    target_tower = move.affected_tower.value();
+    source_tower.DetachFrom(target_tower);
 
     return true;
   }
